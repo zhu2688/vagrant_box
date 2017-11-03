@@ -14,6 +14,7 @@ vagrant up
 - 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/box/master/centos/Vagrantfile)
 - 下载centos67.sh [centos67.sh](https://raw.githubusercontent.com/zhu2688/box/master/centos/centos67.sh)
 
+
 ```
 ## 把上面三个脚本放到当前目录
 vagrant box add dev1 centos-6.7-x64.box
@@ -24,18 +25,18 @@ vagrant up
 -  vagrant 1.9.6
 -  VirtualBox 5.0.40
 
-
 ## 简介
   vagrant 一个完整的box文件都特别大,所以使用base文件加上provision来初始化开发环境
 
-  ```shell
-  .
+```shell
   ├── centos
   │   ├── centos-6.7-x64.box  基本box
   │   ├── centos67.sh    初始化脚本
   │   ├── Vagrantfile    Vagrantfile 文件
-  ```
+```
+  
 ## php环境
+
 ```
 * `Php5.6`
 * `Mysql 5.6`
