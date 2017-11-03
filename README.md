@@ -3,7 +3,7 @@ vagrant php开发环境 box
 
 ## 方法1 从代码仓库直接下载使用
 clone 过程比较久,因为库里面包括了一个大文件,github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
-```
+```shell
 git clone https://github.com/zhu2688/box.git ##
 cd centos
 vagrant box add dev1 ./centos-6.7-x64.box
@@ -15,7 +15,7 @@ vagrant up
 - 下载centos67.sh [centos67.sh](https://raw.githubusercontent.com/zhu2688/box/master/centos/centos67.sh)
 
 
-```
+```shell
 ## 把上面三个脚本放到当前目录
 vagrant box add dev1 centos-6.7-x64.box
 vagrant up
@@ -37,9 +37,9 @@ vagrant up
   
 ## php环境
 
-```
-* `Php5.6`
-* `Mysql 5.6`
-* `Redis 3.2`
-* `Tengine 2.2.1`
+```shell
+* Php5.6
+* Mysql 5.6
+* Redis 3.2
+* Tengine 2.2.1
 ```
