@@ -10,9 +10,9 @@ vagrant box add dev1 ./centos-6.7-x64.box
 vagrant up
 ```
 ## 方法2 下载box后本地安装
-- 下载box [https://github.com/zhu2688/box/releases/download/0.0.1/centos-6.7-x64.box](https://github.com/zhu2688/box/releases/download/0.0.1/centos-6.7-x64.box) 
-- 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/box/master/centos/Vagrantfile)
-- 下载centos67.sh [centos67.sh](https://raw.githubusercontent.com/zhu2688/box/master/centos/centos67.sh)
+- 下载box [https://github.com/zhu2688/vagrant_box/releases/download/0.0.1/centos-6.7-x64.box](https://github.com/zhu2688/vagrant_box/releases/download/0.0.1/centos-6.7-x64.box) 
+- 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/Vagrantfile)
+- 下载centos67.sh [centos67.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/centos67.sh)
 
 
 ```shell
