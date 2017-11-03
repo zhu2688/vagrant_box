@@ -17,34 +17,39 @@ yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
 yum -y install telnet cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel
-#
-# install php
+
+# install lib devel
 yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel
 
+# install libmcrypt
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libmcrypt-2.5.8.tar.gz https://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8 || exit 1
 ./configure && make && make install
-#
+
+# install php
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz http://hk1.php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
 ./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session
 make && make install
-#
+
+# php config
 cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
 chkconfig --add php-fpm
-#
+
+# install libmemcached
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libmemcached-1.0.18.tar.gz https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
 tar xzf libmemcached-1.0.18.tar.gz
 cd libmemcached-1.0.18 || exit 1
 ./configure
 make && make install
-#
+
+# install php-yaf
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://pecl.php.net/get/yaf-${PHP_YAF}.tgz
 tar xzf yaf-${PHP_YAF}.tar.gz
@@ -52,12 +57,11 @@ cd yaf-${PHP_YAF} || exit 1
 ./configure
 make && make install
 
-## php -redis
 /usr/local/bin/pecl install redis-${PHP_REDIS}
 /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 /usr/local/bin/pecl install memcache-${PHP_MEMCACHE}
 
-install tenginx
+# install tengine
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/pcre-${PCRE}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${PCRE}.tar.gz
 tar xzf pcre-${PCRE}.tar.gz
@@ -74,7 +78,7 @@ tar xzf redis-${REDIS}.tar.gz
 cd redis-${REDIS} || exit 1
 make && make install
 sh ./utils/install_server.sh
-#
+
 ## install mysql
 cd /usr/local/src || exit 1
 groupadd mysql
@@ -85,12 +89,14 @@ cd mysql-${MYSQL} || exit 1
 cmake .
 make && make install
 
+## install mysql init
 cd /usr/local/mysql || exit 1
-scripts/mysql_install_db --user=mysql
+./scripts/mysql_install_db --user=mysql
 cp support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
 exit
 
+## nginx config
 echo "Creating /etc/init.d/nginx startup script"
 (
 cat <<'EOF'
