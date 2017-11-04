@@ -5,7 +5,7 @@ vagrant php开发环境 box
 clone 过程比较久,因为库里面包括了一个大文件,github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 ```shell
 git clone https://github.com/zhu2688/vagrant_box.git ##
-cd centos
+cd vagrant_box/centos
 vagrant box add dev1 ./centos-6.7-x64.box
 vagrant up
 ```
