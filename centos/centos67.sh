@@ -85,6 +85,7 @@ sh ./utils/install_server.sh
 cd /usr/local/src || exit 1
 groupadd mysql
 useradd -r -g mysql -s /bin/false mysql
+rm /usr/local/mysql/* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
