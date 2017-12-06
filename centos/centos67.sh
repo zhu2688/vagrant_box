@@ -17,7 +17,7 @@ yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
 yum -y install telnet cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel
-killall php-fpm 
+killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
