@@ -41,6 +41,7 @@ cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 chmod +x /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
 chkconfig --add php-fpm
+chkconfig php-fpm on
 
 # install libmemcached
 cd /usr/local/src || exit 1
@@ -86,6 +87,7 @@ cd /usr/local/src || exit 1
 groupadd mysql
 useradd -r -g mysql -s /bin/false mysql
 rm /usr/local/mysql/* -rf
+rm /var/lib/mysql/ib* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
@@ -97,7 +99,7 @@ cd /usr/local/mysql || exit 1
 ./scripts/mysql_install_db --user=mysql
 cp support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
-exit
+chkconfig mysql on
 
 ## nginx config
 echo "Creating /etc/init.d/nginx startup script"
@@ -182,4 +184,5 @@ EOF
 
 chmod 775 /etc/rc.d/init.d/nginx
 chkconfig --add nginx
+chkconfig nginx on
 reboot
