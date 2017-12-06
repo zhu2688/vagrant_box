@@ -38,6 +38,7 @@ make && make install
 
 # php config
 cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+chmod +x /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
 chkconfig --add php-fpm
 
@@ -51,9 +52,10 @@ make && make install
 
 # install php-yaf
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://pecl.php.net/get/yaf-${PHP_YAF}.tgz
+#curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://pecl.php.net/get/yaf-${PHP_YAF}.tgz
+curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://github.com/laruence/yaf/archive/yaf-${PHP_YAF}.tar.gz
 tar xzf yaf-${PHP_YAF}.tar.gz
-cd yaf-${PHP_YAF} || exit 1
+cd yaf-yaf-${PHP_YAF} || exit 1
 ./configure
 make && make install
 
