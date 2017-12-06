@@ -17,7 +17,9 @@ yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
 yum -y install telnet cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel
-
+killall php-fpm 
+killall mysql
+killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel
 
@@ -185,4 +187,62 @@ EOF
 chmod 775 /etc/rc.d/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on
+
+mkdir -p /usr/local/nginx/conf/servers
+echo "Creating servers nginx conf"
+(
+cat <<'EOF'
+#user  nobody;
+worker_processes  1;
+
+error_log  logs/error.log;
+#pid        logs/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+http {
+    include       mime.types;
+    server_tag "SOEASY3.0";
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  logs/access.log  main;
+    sendfile        on;
+    #tcp_nopush     on;
+    keepalive_timeout  65;
+    client_body_buffer_size 128k;
+    gzip  on;
+    gzip_min_length 1k;
+    gzip_buffers 4 16k;
+    gzip_http_version 1.0;
+    gzip_comp_level 2;
+    gzip_disable "MSIE [1-6]\.";
+    gzip_types text/plain application/javascript application/x-javascript text/css application/xml image/jpeg;
+    include servers/default.conf;
+}
+EOF
+) | tee /usr/local/nginx/conf/nginx.conf
+
+echo "Creating /usr/local/nginx conf"
+(
+cat <<'EOF'
+server {
+     listen       80;
+     server_name  localhost;
+     location / {
+         root   html;
+         index  index.html index.htm;
+     }
+     error_page   500 502 503 504  /50x.html;
+     location = /50x.html {
+         root   html;
+     }
+ }
+EOF
+) | tee /usr/local/nginx/conf/servers/default.conf
+
 reboot
