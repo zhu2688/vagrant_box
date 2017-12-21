@@ -51,11 +51,12 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz http://hk1.php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc
 make && make install
 
 # php config
 cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+cp ./php.ini-development /etc/php.ini
 chmod +x /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
 chkconfig --add php-fpm
