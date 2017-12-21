@@ -6,6 +6,8 @@ NGINX="2.2.1"
 PCRE="8.36"
 REDIS="3.2.11"
 MYSQL="5.6.38"
+PHP_GD='2.1.0'
+PHP_JPEG='9b'
 PHP_REDIS="3.1.4"
 PHP_YAF="2.3.5"
 PHP_MEMCACHED="2.2.0"
@@ -28,6 +30,20 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libmcrypt-2.5.8.tar.gz https://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8 || exit 1
+./configure && make && make install
+
+# install libjpeg
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/jpegsrc.v${PHP_JPEG}.tar.gz http://www.ijg.org/files/jpegsrc.v${PHP_JPEG}.tar.gz
+tar xzf jpegsrc.v${PHP_JPEG}.tar.gz
+cd jpeg-${PHP_JPEG} || exit 1
+./configure && make && make install
+
+# install libgd
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/gd-${PHP_GD}.tar.gz https://github.com/libgd/libgd/archive/gd-${PHP_GD}.tar.gz
+tar xzf gd-${PHP_GD}.tar.gz
+cd libgd-gd-${PHP_GD} || exit 1
 ./configure && make && make install
 
 # install php
