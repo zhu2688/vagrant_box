@@ -45,21 +45,21 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/gd-${PHP_GD}.tar.gz https://github.com/libgd/libgd/archive/gd-${PHP_GD}.tar.gz
 tar xzf gd-${PHP_GD}.tar.gz
 cd libgd-gd-${PHP_GD} || exit 1
-./configure && make && make install
+./bootstrap.sh && ./configure && make && make install
 
 # install php
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz http://hk1.php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc --with-jpeg-dir=/usr/local
 make && make install
 
 # php config
-cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-cp ./php.ini-development /etc/php.ini
+cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm -r
+cp ./php.ini-development /etc/php.ini -r
 chmod +x /etc/init.d/php-fpm
-cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
+cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf -r
 chkconfig --add php-fpm
 chkconfig php-fpm on
 
@@ -77,6 +77,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://github.com/laruence/yaf/archive/yaf-${PHP_YAF}.tar.gz
 tar xzf yaf-${PHP_YAF}.tar.gz
 cd yaf-yaf-${PHP_YAF} || exit 1
+/usr/local/bin/phpize
 ./configure
 make && make install
 
