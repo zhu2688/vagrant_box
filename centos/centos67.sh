@@ -6,6 +6,7 @@ NGINX="2.2.1"
 PCRE="8.36"
 REDIS="3.2.11"
 MYSQL="5.6.38"
+LIB_MCRYPT='2.5.8'
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="3.1.4"
@@ -27,9 +28,9 @@ yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng
 
 # install libmcrypt
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/libmcrypt-2.5.8.tar.gz https://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
-tar xzf libmcrypt-2.5.8.tar.gz
-cd libmcrypt-2.5.8 || exit 1
+curl -L -o /usr/local/src/libmcrypt-${LIB_MCRYPT}.tar.gz https://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIB_MCRYPT}/libmcrypt-2.5.8.tar.gz/download
+tar xzf libmcrypt-${LIB_MCRYPT}.tar.gz
+cd libmcrypt-${LIB_MCRYPT} || exit 1
 ./configure && make && make install
 
 # install libjpeg
