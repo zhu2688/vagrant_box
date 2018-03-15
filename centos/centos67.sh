@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.32"
+PHP="5.6.34"
 NGINX="2.2.1"
 PCRE="8.36"
 REDIS="3.2.11"
@@ -19,6 +19,7 @@ curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-B
 yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
+source /etc/profile
 yum -y install telnet cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel
 killall php-fpm
 killall mysql
