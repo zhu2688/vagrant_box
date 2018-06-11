@@ -1,12 +1,13 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.34"
-NGINX="2.2.1"
+PHP="5.6.36"
+NGINX="2.2.2"
 PCRE="8.36"
 REDIS="3.2.11"
-MYSQL="5.6.38"
+MYSQL="5.6.40"
 LIB_MCRYPT='2.5.8'
+COMPOSER="1.6.5"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="3.1.4"
@@ -50,8 +51,9 @@ cd libgd-gd-${PHP_GD} || exit 1
 
 # install php
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/php-${PHP}.tar.gz http://hk1.php.net/get/php-${PHP}.tar.gz/from/this/mirror
+curl -L -o /usr/local/src/php-${PHP}.tar.gz http://cn2.php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
+
 cd php-${PHP} || exit 1
 ./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc --with-jpeg-dir=/usr/local
 make && make install
@@ -85,6 +87,11 @@ make && make install
 /usr/local/bin/pecl install redis-${PHP_REDIS}
 /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 /usr/local/bin/pecl install memcache-${PHP_MEMCACHE}
+
+# install compoer 
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
+/bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
 
 # install tengine
 cd /usr/local/src || exit 1
