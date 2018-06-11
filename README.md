@@ -7,7 +7,7 @@ github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 ## 下载box后本地安装
 - 下载box [https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box) 
 - 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/Vagrantfile)
-- 下载centos67.sh [centos67.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/centos69.sh)
+- 下载centos69.sh [centos69.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/centos69.sh)
 
 
 ```shell
