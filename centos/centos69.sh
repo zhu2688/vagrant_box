@@ -31,7 +31,7 @@ yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng
 
 # install freetype
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/libmcrypt-${LIB_MCRYPT}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
+curl -L -o /usr/local/src/freetype-${LIB_FREETYPE}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
 tar xzf freetype-${LIB_FREETYPE}.tar.gz
 cd freetype-${LIB_FREETYPE} || exit 1
 ./configure && make && make install
