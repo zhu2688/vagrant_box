@@ -7,6 +7,7 @@ PCRE="8.36"
 REDIS="3.2.11"
 MYSQL="5.6.40"
 LIB_MCRYPT='2.5.8'
+LIB_FREETYPE='2.6.4'
 COMPOSER="1.6.5"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
@@ -27,6 +28,13 @@ killall mysql
 killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel
+
+# install freetype
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/libmcrypt-${LIB_MCRYPT}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
+tar xzf freetype-${LIB_FREETYPE}.tar.gz
+cd freetype-${LIB_FREETYPE} || exit 1
+./configure && make && make install
 
 # install libmcrypt
 cd /usr/local/src || exit 1
@@ -55,7 +63,7 @@ curl -L -o /usr/local/src/php-${PHP}.tar.gz http://cn2.php.net/get/php-${PHP}.ta
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc --with-jpeg-dir=/usr/local
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc --with-jpeg-dir=/usr/local --with-freetype-dir=/usr/local
 make && make install
 
 # php config
