@@ -15,9 +15,16 @@ PHP_REDIS="3.1.4"
 PHP_YAF="2.3.5"
 PHP_MEMCACHED="2.2.0"
 PHP_MEMCACHE="3.0.8"
+COUNTRY="CN"
+COUNTRY_FILE="/tmp/country"
 
 # yum update 
-curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+# check country
+curl -o $COUNTRY_FILE ifconfig.co/country-iso
+checkCN=`cat $COUNTRY_FILE|grep $COUNTRY`
+if [[ -n $checkCN ]]; then
+  curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+fi
 yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
@@ -59,7 +66,7 @@ cd libgd-gd-${PHP_GD} || exit 1
 
 # install php
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/php-${PHP}.tar.gz http://cn2.php.net/get/php-${PHP}.tar.gz/from/this/mirror
+curl -L -o /usr/local/src/php-${PHP}.tar.gz http://php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
