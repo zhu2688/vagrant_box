@@ -5,6 +5,7 @@ PHP="5.6.37"
 NGINX="2.2.2"
 PCRE="8.36"
 REDIS="3.2.11"
+MAIN_MYSQL="5.6"
 MYSQL="5.6.40"
 LIB_MCRYPT='2.5.8'
 LIB_FREETYPE='2.6.4'
@@ -56,6 +57,8 @@ curl -L -o /usr/local/src/jpegsrc.v${PHP_JPEG}.tar.gz http://www.ijg.org/files/j
 tar xzf jpegsrc.v${PHP_JPEG}.tar.gz
 cd jpeg-${PHP_JPEG} || exit 1
 ./configure && make && make install
+make libdir=/usr/lib64
+make libdir=/usr/lib64 install
 
 # install libgd
 cd /usr/local/src || exit 1
@@ -132,7 +135,7 @@ groupadd mysql
 useradd -r -g mysql -s /bin/false mysql
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-${MYSQL}.tar.gz
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
 cmake .
