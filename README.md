@@ -1,5 +1,5 @@
 # vagrant box 
-vagrant box php7开发环境
+vagrant box php7开发环境 php5的详见 [php5分支](https://github.com/zhu2688/vagrant_box/tree/master)
 
 ## box 文件保存在file分支
 github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
