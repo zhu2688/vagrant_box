@@ -1,24 +1,25 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.37"
+PHP="7.2.9"
 NGINX="2.2.2"
 PCRE="8.36"
-REDIS="3.2.11"
+REDIS="3.2.12"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.40"
-LIB_MCRYPT='2.5.8'
 LIB_FREETYPE='2.6.4'
-COMPOSER="1.6.5"
+COMPOSER="1.7.2"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
-PHP_REDIS="3.1.4"
-PHP_YAF="2.3.5"
-PHP_MEMCACHED="2.2.0"
-PHP_MEMCACHE="3.0.8"
+PHP_REDIS="4.1.1"
+PHP_YAF="3.0.7"
+PHP_MEMCACHED="3.0.4"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
+WWWUSER="www"
 
+groupadd $WWWUSER
+useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
 # yum update 
 # check country
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
@@ -30,25 +31,19 @@ yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
-yum -y install epel-release telnet cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel
+
+yum -y install epel-release telnet wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel
 killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel
+yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libjpeg-devel libpng-devel
 
 # install freetype
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/freetype-${LIB_FREETYPE}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
 tar xzf freetype-${LIB_FREETYPE}.tar.gz
 cd freetype-${LIB_FREETYPE} || exit 1
-./configure && make && make install
-
-# install libmcrypt
-cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/libmcrypt-${LIB_MCRYPT}.tar.gz https://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIB_MCRYPT}/libmcrypt-2.5.8.tar.gz/download
-tar xzf libmcrypt-${LIB_MCRYPT}.tar.gz
-cd libmcrypt-${LIB_MCRYPT} || exit 1
 ./configure && make && make install
 
 # install libjpeg
@@ -73,7 +68,7 @@ curl -L -o /usr/local/src/php-${PHP}.tar.gz http://php.net/get/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --enable-mbstring --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-gd --with-openssl --with-mysql --with-mcrypt --enable-bcmath --with-iconv --enable-pcntl --enable-zip --enable-soap --enable-session --with-config-file-path=/etc --with-jpeg-dir=/usr/local --with-freetype-dir=/usr/local
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --with-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --disable-fileinfo --with-config-file-path=/etc --with-jpeg-dir=/usr/local --with-freetype-dir=/usr/local
 make && make install
 
 # php config
@@ -92,19 +87,10 @@ cd libmemcached-1.0.18 || exit 1
 ./configure
 make && make install
 
-# install php-yaf
-cd /usr/local/src || exit 1
-#curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://pecl.php.net/get/yaf-${PHP_YAF}.tgz
-curl -L -o /usr/local/src/yaf-${PHP_YAF}.tar.gz https://github.com/laruence/yaf/archive/yaf-${PHP_YAF}.tar.gz
-tar xzf yaf-${PHP_YAF}.tar.gz
-cd yaf-yaf-${PHP_YAF} || exit 1
-/usr/local/bin/phpize
-./configure
-make && make install
 
-/usr/local/bin/pecl install redis-${PHP_REDIS}
-/usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
-/usr/local/bin/pecl install memcache-${PHP_MEMCACHE}
+/usr/local/bin/pecl install yaf-${PHP_YAF}
+printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
+printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 
 # install compoer 
 cd /usr/local/src || exit 1
@@ -120,7 +106,7 @@ tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
 ./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE}
 make && make install
-
+# 
 ## install redis
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/redis-${REDIS}.tar.gz http://download.redis.io/releases/redis-${REDIS}.tar.gz
@@ -130,9 +116,10 @@ make && make install
 sh ./utils/install_server.sh
 
 ## install mysql
-cd /usr/local/src || exit 1
+
 groupadd mysql
 useradd -r -g mysql -s /bin/false mysql
+cd /usr/local/src || exit 1
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
@@ -237,7 +224,7 @@ mkdir -p /usr/local/nginx/conf/servers
 echo "Creating servers nginx conf"
 (
 cat <<'EOF'
-#user  nobody;
+user  www;
 worker_processes  1;
 
 error_log  logs/error.log;

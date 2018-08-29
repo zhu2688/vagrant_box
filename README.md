@@ -1,18 +1,18 @@
 # vagrant box 
-vagrant php开发环境 box
+vagrant box php7开发环境
 
 ## box 文件保存在file分支
 github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 
 ## 下载box后本地安装
 - 下载box [https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box) 
-- 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/Vagrantfile)
-- 下载centos69.sh [centos69.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/centos69.sh)
+- 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/Vagrantfile)
+- 下载centos69.sh [centos69.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/centos69.sh)
 
 
 ```shell
 ## 把上面三个脚本放到当前目录
-vagrant box add dev1 centos-6.9-x64.box
+vagrant box add php7 centos-6.9-x64.box
 vagrant up
 ```
 
@@ -34,8 +34,8 @@ vagrant up
 ## php环境
 
 ```shell
-* Php5.6
+* Php7.2
 * Mysql 5.6
 * Redis 3.2
-* Tengine 2.2.1
+* Tengine 2.2.2
 ```
