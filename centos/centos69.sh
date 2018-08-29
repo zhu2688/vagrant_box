@@ -96,6 +96,7 @@ printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
 /bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
+chmod +x /usr/local/bin/composer
 
 # install tengine
 cd /usr/local/src || exit 1
