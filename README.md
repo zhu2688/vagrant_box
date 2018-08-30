@@ -14,6 +14,7 @@ github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 ## 把上面三个脚本放到当前目录
 vagrant box add php7 centos-6.9-x64.box
 vagrant up
+
 ```
 
 ## 软件环境
@@ -30,10 +31,19 @@ vagrant up
   │   ├── centos69.sh    初始化脚本
   │   ├── Vagrantfile    Vagrantfile 文件
 ```
-  
+## Provision
+  Provision工作方式和详解 [https://www.vagrantup.com/docs/provisioning/](https://www.vagrantup.com/docs/provisioning/)
+```shell
+## 只会在第一次启动的时候会自动执行 provision 的shell脚本 centos69.sh 
+## 如果需要再次执行centos69.sh 
+## 需要用以下方式启动
+vagrant reload --provision
+```
+
 ## php环境
 
 ```shell
+## centos69.sh脚本中可以修改各个软件和扩展的版本号
 * Php7.2
 * Mysql 5.6
 * Redis 3.2

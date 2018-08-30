@@ -17,6 +17,7 @@ PHP_MEMCACHED="3.0.4"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
+MYSQLUSER="mysql"
 PHP_INI="/etc/php.ini"
 
 groupadd $WWWUSER
@@ -123,8 +124,8 @@ sh ./utils/install_server.sh
 
 ## install mysql
 
-groupadd mysql
-useradd -r -g mysql -s /bin/false mysql
+groupadd $MYSQLUSER
+useradd -r -g $MYSQLUSER -s /bin/false $MYSQLUSER
 cd /usr/local/src || exit 1
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
@@ -136,7 +137,7 @@ make && make install
 
 ## install mysql init
 cd /usr/local/mysql || exit 1
-./scripts/mysql_install_db --user=mysql
+./scripts/mysql_install_db --user=$MYSQLUSER
 cp support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
 chkconfig mysql on
