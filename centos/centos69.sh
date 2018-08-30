@@ -31,7 +31,7 @@ if [[ -n $checkCN ]]; then
 fi
 yum clean all
 yum makecache
-echo "export PATH=\"\$PATH:/usr/local/mysql/bin/mysql:/usr/local/bin:\$PATH\";" >> /etc/profile
+echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
 yum -y install epel-release telnet wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel
