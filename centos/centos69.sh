@@ -64,7 +64,7 @@ tar xzf gd-${PHP_GD}.tar.gz
 cd libgd-gd-${PHP_GD} || exit 1
 ./bootstrap.sh && ./configure && make && make install
 
-# install php
+# install php 
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz http://php.net/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
@@ -148,7 +148,7 @@ chkconfig mysql on
 ## nginx config
 echo "Creating /etc/init.d/nginx startup script"
 (
-cat <<EOF
+cat <<'EOF'
 #!/bin/bash
 # nginx Startup script for the Nginx HTTP Server
 # it is v.0.0.2 version.
@@ -233,8 +233,8 @@ chkconfig nginx on
 mkdir -p /usr/local/nginx/conf/servers
 echo "Creating servers nginx conf"
 (
-cat <<EOF
-user ${WWWUSER};
+cat <<'EOF'
+user www;
 worker_processes  1;
 
 error_log  logs/error.log;
@@ -271,7 +271,7 @@ EOF
 
 echo "Creating /usr/local/nginx conf"
 (
-cat <<EOF
+cat <<'EOF'
 server {
      listen       80;
      server_name  localhost;
