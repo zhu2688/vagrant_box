@@ -17,6 +17,7 @@ PHP_MEMCACHED="3.0.4"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
+PHP_INI="/etc/php.ini"
 
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
@@ -73,7 +74,7 @@ make && make install
 
 # php config
 cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm -r
-cp ./php.ini-development /etc/php.ini -r
+cp ./php.ini-development $PHP_INI -r
 chmod +x /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf -r
 chkconfig --add php-fpm
@@ -87,11 +88,15 @@ cd libmemcached-1.0.18 || exit 1
 ./configure
 make && make install
 
-
 /usr/local/bin/pecl install yaf-${PHP_YAF}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
 printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 
+echo "extension=yaf.so" >> $PHP_INI
+echo "extension=redis.so" >> $PHP_INI
+echo "extension=mysqli.so" >> $PHP_INI
+echo "extension=pdo_mysql.so" >> $PHP_INI
+/bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PATH_PHP_INI
 # install compoer 
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
@@ -225,7 +230,7 @@ mkdir -p /usr/local/nginx/conf/servers
 echo "Creating servers nginx conf"
 (
 cat <<'EOF'
-user  www;
+user $WWWUSER;
 worker_processes  1;
 
 error_log  logs/error.log;
