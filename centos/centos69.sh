@@ -76,8 +76,10 @@ make && make install
 # php config
 cp ./sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm -r
 cp ./php.ini-development $PHP_INI -r
-chmod +x /etc/init.d/php-fpm
 cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf -r
+cp /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/www.conf
+/bin/sed -i -e 's/^include=NONE.*$/include=etc\/php-fpm.d\/\*.conf/' /usr/local/etc/php-fpm.conf
+chmod +x /etc/init.d/php-fpm
 chkconfig --add php-fpm
 chkconfig php-fpm on
 
@@ -97,7 +99,8 @@ echo "extension=yaf.so" >> $PHP_INI
 echo "extension=redis.so" >> $PHP_INI
 echo "extension=mysqli.so" >> $PHP_INI
 echo "extension=pdo_mysql.so" >> $PHP_INI
-/bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PATH_PHP_INI
+
+/bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 # install compoer 
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
@@ -145,7 +148,7 @@ chkconfig mysql on
 ## nginx config
 echo "Creating /etc/init.d/nginx startup script"
 (
-cat <<'EOF'
+cat <<EOF
 #!/bin/bash
 # nginx Startup script for the Nginx HTTP Server
 # it is v.0.0.2 version.
@@ -230,8 +233,8 @@ chkconfig nginx on
 mkdir -p /usr/local/nginx/conf/servers
 echo "Creating servers nginx conf"
 (
-cat <<'EOF'
-user $WWWUSER;
+cat <<EOF
+user ${WWWUSER};
 worker_processes  1;
 
 error_log  logs/error.log;
@@ -242,7 +245,7 @@ events {
 }
 http {
     include       mime.types;
-    server_tag "SOEASY3.0";
+    server_tag "SOEASY4.0";
     default_type  application/octet-stream;
 
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -268,7 +271,7 @@ EOF
 
 echo "Creating /usr/local/nginx conf"
 (
-cat <<'EOF'
+cat <<EOF
 server {
      listen       80;
      server_name  localhost;
