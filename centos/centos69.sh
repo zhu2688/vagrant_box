@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.2.9"
+PHP="7.2.10"
 NGINX="2.2.2"
 PCRE="8.36"
 REDIS="3.2.12"
@@ -34,7 +34,7 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel
+yum -y install epel-release telnet wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
 killall php-fpm
 killall mysql
 killall nginx
@@ -114,7 +114,7 @@ tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
-./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE}
+./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
 make && make install
 # 
 ## install redis
