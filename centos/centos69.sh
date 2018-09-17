@@ -35,7 +35,7 @@ killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel
+yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libmcrypt libjpeg-devel libpng-devel geoip-devel
 
 # install freetype
 cd /usr/local/src || exit 1
@@ -118,7 +118,7 @@ tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
-./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE}
+./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6
 make && make install
 
 ## install redis
