@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.37"
+PHP="5.6.38"
 NGINX="2.2.2"
 PCRE="8.36"
 REDIS="3.2.12"
@@ -118,7 +118,7 @@ tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
-./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6
+./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module 
 make && make install
 
 ## install redis
