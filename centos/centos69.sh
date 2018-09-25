@@ -6,7 +6,7 @@ NGINX="2.2.2"
 PCRE="8.36"
 REDIS="3.2.12"
 MAIN_MYSQL="5.6"
-MYSQL="5.6.40"
+MYSQL="5.6.41"
 LIB_MCRYPT='2.5.8'
 LIB_FREETYPE='2.6.4'
 COMPOSER="1.7.2"
@@ -253,7 +253,7 @@ http {
 
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+                      '"$http_user_agent" "$http_x_forwarded_for" "$request_time"';
 
     access_log  logs/access.log  main;
     sendfile        on;
