@@ -127,7 +127,17 @@ curl -L -o /usr/local/src/redis-${REDIS}.tar.gz http://download.redis.io/release
 tar xzf redis-${REDIS}.tar.gz
 cd redis-${REDIS} || exit 1
 make && make install
-sh ./utils/install_server.sh
+mkdir -p /etc/redis
+cp -f *.conf /etc/redis
+sed -i -e 's/redis_\${REDIS_PORT}/redis-server/' ./utils/install_server.sh
+sed -i -e 's/redis_\$REDIS_PORT/redis-server/' ./utils/install_server.sh
+cat << CMD | ./utils/install_server.sh
+6379
+/etc/redis/redis.conf
+
+
+
+CMD
 
 ## install mysql
 cd /usr/local/src || exit 1
