@@ -5,7 +5,7 @@ vagrant php5开发环境   php7的详见 [php7分支](https://github.com/zhu2688
 github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 
 ## 下载box后本地安装
-- 下载box [https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/raw/file/centos/centos-6.9-x64.box) 
+- 下载box [https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box) 
 - 下载Vagrantfile [Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/Vagrantfile)
 - 下载centos69.sh [centos69.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/master/centos/centos69.sh)
 
@@ -17,9 +17,9 @@ vagrant up
 ```
 
 ## 软件环境
--  vagrant 2.0.1
--  VirtualBox 5.1.30
--  GuestAdditions 5.1.30
+-  vagrant 2.1.4
+-  VirtualBox 5.2.18
+-  GuestAdditions 5.2.18
 
 ## 简介
   vagrant 一个完整的box文件都特别大,所以使用base文件加上provision来初始化开发环境
