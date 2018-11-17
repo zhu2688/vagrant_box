@@ -8,7 +8,7 @@ REDIS="3.2.12"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.42"
 LIB_FREETYPE='2.6.4'
-COMPOSER="1.7.2"
+COMPOSER="1.7.3"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
@@ -19,6 +19,7 @@ COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
 MYSQLUSER="mysql"
 PHP_INI="/etc/php.ini"
+PHP_SERVER="php.net"
 
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
@@ -28,7 +29,9 @@ curl -o $COUNTRY_FILE ifconfig.co/country-iso
 checkCN=`cat $COUNTRY_FILE|grep $COUNTRY`
 if [[ -n $checkCN ]]; then
   curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+  PHP_SERVER="cn2.php.net"
 fi
+
 yum clean all
 yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
@@ -66,7 +69,7 @@ cd libgd-gd-${PHP_GD} || exit 1
 
 # install php 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/php-${PHP}.tar.gz http://php.net/get/php-${PHP}.tar.gz/from/this/mirror
+curl -L -o /usr/local/src/php-${PHP}.tar.gz http://${PHP_SERVER}/get/php-${PHP}.tar.gz/from/this/mirror
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
