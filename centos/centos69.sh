@@ -2,11 +2,11 @@
 #Provided by @soeasy
 
 PHP="5.6.38"
-NGINX="2.2.2"
+NGINX="2.2.3"
 PCRE="8.36"
 REDIS="3.2.12"
 MAIN_MYSQL="5.6"
-MYSQL="5.6.41"
+MYSQL="5.6.42"
 LIB_MCRYPT='2.5.8'
 LIB_FREETYPE='2.6.4'
 COMPOSER="1.7.2"
