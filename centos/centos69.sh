@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.38"
+PHP="5.6.39"
 NGINX="2.2.3"
 PCRE="8.36"
 REDIS="3.2.12"
