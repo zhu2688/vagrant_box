@@ -4,7 +4,7 @@
 PHP="7.3.0"
 NGINX="2.2.3"
 PCRE="8.36"
-REDIS="3.2.12"
+REDIS="4.0.12"
 MARIADB="10.3.10"
 # MYSQL="5.6.42"
 LIB_ZIP="1.2.0"
@@ -103,6 +103,72 @@ cd tengine-${NGINX} || exit 1
 ./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
 make && make install
 
+## nginx config
+mkdir -p /usr/local/nginx/conf/servers
+echo "Creating servers nginx conf"
+(
+cat <<'EOF'
+user www;
+worker_processes  1;
+
+error_log  logs/error.log;
+#pid        logs/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+http {
+    include       mime.types;
+    server_tag "SOEASY4.0";
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for" "$request_time"';
+
+    access_log  logs/access.log  main;
+    sendfile        on;
+    #tcp_nopush     on;
+    keepalive_timeout  65;
+    client_body_buffer_size 128k;
+    gzip  on;
+    gzip_min_length 1k;
+    gzip_buffers 4 16k;
+    gzip_http_version 1.0;
+    gzip_comp_level 2;
+    gzip_disable "MSIE [1-6]\.";
+    gzip_types text/plain application/javascript application/x-javascript text/css application/xml image/jpeg;
+    include servers/default.conf;
+}
+EOF
+) | tee /usr/local/nginx/conf/nginx.conf
+
+echo "Creating /usr/lib/systemd/system/nginx.service"
+(
+cat <<'EOF'
+[Unit]
+Description=The Nginx Server
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/local/nginx/sbin/nginx
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+) | tee /usr/lib/systemd/system/nginx.service
+chmod +x /usr/lib/systemd/system/nginx.service
+systemctl enable nginx.service
+systemctl stop nginx.service
+systemctl start nginx.service
+
 ## install redis
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/redis-${REDIS}.tar.gz http://download.redis.io/releases/redis-${REDIS}.tar.gz
@@ -111,16 +177,31 @@ cd redis-${REDIS} || exit 1
 make && make install
 mkdir -p /etc/redis
 cp -f *.conf /etc/redis
-sed -i -e 's/redis_\${REDIS_PORT}/redis-server/' ./utils/install_server.sh
-sed -i -e 's/redis_\$REDIS_PORT/redis-server/' ./utils/install_server.sh
-cat << CMD | ./utils/install_server.sh
-6379
-/etc/redis/redis.conf
 
+echo "Creating /usr/lib/systemd/system/redis.service"
+(
+cat <<'EOF'
+[Unit]
+Description=The Redis Server
+After=syslog.target network.target
 
+[Service]
+Type=forking
+PIDFile=/var/run/redis.pid
+ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
 
-CMD
+[Install]
+WantedBy=multi-user.target
+EOF
+) | tee /usr/lib/systemd/system/redis.service
 
+chmod +x /usr/lib/systemd/system/redis.service
+systemctl enable redis.service
+systemctl stop redis.service
+systemctl start redis.service
 
 ## install mariadb
 
