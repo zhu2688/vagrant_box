@@ -82,10 +82,7 @@ echo "extension=pdo_mysql.so" >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 
-chmod +x /usr/lib/systemd/system/php-fpm.service
-systemctl enable php-fpm.service
-systemctl stop php-fpm.service
-systemctl start php-fpm.service
+
 
 # install compoer 
 cd /usr/local/src || exit 1
@@ -153,7 +150,7 @@ After=syslog.target network.target remote-fs.target nss-lookup.target
 [Service]
 Type=forking
 PIDFile=/var/run/nginx.pid
-ExecStartPre=/usr/sbin/nginx -t
+ExecStartPre=/usr/local/nginx/sbin/nginx -t
 ExecStart=/usr/local/nginx/sbin/nginx
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
@@ -164,10 +161,6 @@ WantedBy=multi-user.target
 
 EOF
 ) | tee /usr/lib/systemd/system/nginx.service
-chmod +x /usr/lib/systemd/system/nginx.service
-systemctl enable nginx.service
-systemctl stop nginx.service
-systemctl start nginx.service
 
 ## install redis
 cd /usr/local/src || exit 1
@@ -177,6 +170,8 @@ cd redis-${REDIS} || exit 1
 make && make install
 mkdir -p /etc/redis
 cp -f *.conf /etc/redis
+
+/bin/sed -i -e 's/^pidfile.*$/pidfile \/var\/run\/redis.pid/' /etc/redis/redis.conf
 
 echo "Creating /usr/lib/systemd/system/redis.service"
 (
@@ -198,13 +193,8 @@ WantedBy=multi-user.target
 EOF
 ) | tee /usr/lib/systemd/system/redis.service
 
-chmod +x /usr/lib/systemd/system/redis.service
-systemctl enable redis.service
-systemctl stop redis.service
-systemctl start redis.service
 
 ## install mariadb
-
 groupadd $DB_USER
 useradd -r -g $DB_USER -s /bin/false $DB_USER
 mkdir -p $DB_DATA_PATH
@@ -213,9 +203,25 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/mariadb-${MARIADB}.tar.gz https://downloads.mariadb.org/interstitial/mariadb-${MARIADB}/source/mariadb-${MARIADB}.tar.gz
 tar xzf mariadb-${MARIADB}.tar.gz
 cd mariadb-${MARIADB} || exit 1
-rm -f CMakeCache.txt
+rm -f CmakeCache.txt
 cmake .
 make && make install
 
 ## install mariadb init
+chmod +x /usr/lib/systemd/system/php-fpm.service
+chmod +x /usr/lib/systemd/system/redis.service
+chmod +x /usr/lib/systemd/system/nginx.service
+
+systemctl stop php-fpm.service
+systemctl stop redis.service
+systemctl stop nginx.service
+
+systemctl enable php-fpm.service
+systemctl enable redis.service
+systemctl enable nginx.service
+
+systemctl daemon-reload
+systemctl start php-fpm.service
+systemctl start redis.service
+systemctl start nginx.service
 
