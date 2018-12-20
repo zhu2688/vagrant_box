@@ -18,6 +18,7 @@ DB_USER="mysql"
 DB_DATA_PATH="/data/mysql"
 PHP_INI="/etc/php.ini"
 PHP_SERVER="php.net"
+REDIS_INI="/etc/redis/redis.conf"
 
 RELEASE=`cat /etc/redhat-release`
 groupadd $WWWUSER
@@ -109,7 +110,7 @@ user www;
 worker_processes  1;
 
 error_log  logs/error.log;
-#pid        logs/nginx.pid;
+pid        /var/run/nginx.pid;
 
 events {
     worker_connections  1024;
@@ -139,6 +140,24 @@ http {
 }
 EOF
 ) | tee /usr/local/nginx/conf/nginx.conf
+
+echo "Creating /usr/local/nginx conf"
+(
+cat <<'EOF'
+server {
+     listen       80;
+     server_name  localhost;
+     location / {
+         root   html;
+         index  index.html index.htm;
+     }
+     error_page   500 502 503 504  /50x.html;
+     location = /50x.html {
+         root   html;
+     }
+ }
+EOF
+) | tee /usr/local/nginx/conf/servers/default.conf
 
 echo "Creating /usr/lib/systemd/system/nginx.service"
 (
@@ -171,7 +190,8 @@ make && make install
 mkdir -p /etc/redis
 cp -f *.conf /etc/redis
 
-/bin/sed -i -e 's/^pidfile.*$/pidfile \/var\/run\/redis.pid/' /etc/redis/redis.conf
+/bin/sed -i -e 's/^pidfile.*$/pidfile \/var\/run\/redis.pid/' $REDIS_INI
+/bin/sed -i -e 's/^daemonize.*$/daemonize yes/' $REDIS_INI
 
 echo "Creating /usr/lib/systemd/system/redis.service"
 (
@@ -190,7 +210,7 @@ PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
-EOF
+EOF 
 ) | tee /usr/lib/systemd/system/redis.service
 
 
