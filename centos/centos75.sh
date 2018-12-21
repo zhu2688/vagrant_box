@@ -210,9 +210,8 @@ PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
-EOF 
+EOF
 ) | tee /usr/lib/systemd/system/redis.service
-
 
 ## install mariadb
 groupadd $DB_USER
