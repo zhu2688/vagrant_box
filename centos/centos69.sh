@@ -13,6 +13,8 @@ PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
 PHP_YAF="3.0.7"
+PHP_YAR="2.0.5"
+PHP_MSGPACK="2.0.3"
 PHP_MEMCACHED="3.0.4"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
@@ -96,10 +98,14 @@ cd libmemcached-1.0.18 || exit 1
 make && make install
 
 /usr/local/bin/pecl install yaf-${PHP_YAF}
+/usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
+printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
 printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 
+echo "extension=msgpack.so" >> $PHP_INI
 echo "extension=yaf.so" >> $PHP_INI
+echo "extension=yar.so" >> $PHP_INI
 echo "extension=redis.so" >> $PHP_INI
 echo "extension=mysqli.so" >> $PHP_INI
 echo "extension=pdo_mysql.so" >> $PHP_INI
