@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="5.6.39"
+PHP="5.6.40"
 NGINX="2.2.3"
 PCRE="8.36"
 REDIS="3.2.12"
@@ -9,7 +9,7 @@ MAIN_MYSQL="5.6"
 MYSQL="5.6.42"
 LIB_MCRYPT='2.5.8'
 LIB_FREETYPE='2.6.4'
-COMPOSER="1.7.2"
+COMPOSER="1.7.3"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="3.1.4"
