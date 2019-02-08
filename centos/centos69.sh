@@ -8,7 +8,7 @@ REDIS="3.2.12"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.42"
 LIB_FREETYPE='2.6.4'
-COMPOSER="1.7.3"
+COMPOSER="1.8.3"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
@@ -16,6 +16,7 @@ PHP_YAF="3.0.7"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
 PHP_MEMCACHED="3.0.4"
+PHP_MONGODB="1.5.3"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
@@ -99,6 +100,7 @@ make && make install
 
 /usr/local/bin/pecl install yaf-${PHP_YAF}
 /usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
+/usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
 printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
