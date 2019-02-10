@@ -6,7 +6,7 @@ NGINX="2.2.3"
 PCRE="8.36"
 REDIS="3.2.12"
 MAIN_MYSQL="5.6"
-MYSQL="5.6.42"
+MYSQL="5.6.43"
 LIB_FREETYPE='2.6.4'
 COMPOSER="1.8.3"
 PHP_GD='2.1.0'
@@ -106,11 +106,12 @@ printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
 printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 
 echo "extension=msgpack.so" >> $PHP_INI
-echo "extension=yaf.so" >> $PHP_INI
-echo "extension=yar.so" >> $PHP_INI
 echo "extension=redis.so" >> $PHP_INI
 echo "extension=mysqli.so" >> $PHP_INI
 echo "extension=pdo_mysql.so" >> $PHP_INI
+echo "extension=mongodb.so" >> $PHP_INI
+echo "extension=yaf.so" >> $PHP_INI
+echo "extension=yar.so" >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 # install compoer 
