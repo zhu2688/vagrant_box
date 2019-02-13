@@ -17,6 +17,7 @@ PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
 PHP_MEMCACHED="3.0.4"
 PHP_MONGODB="1.5.3"
+CACHETOOL="4.0.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
@@ -120,6 +121,12 @@ curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/rel
 /bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
 chmod +x /usr/local/bin/composer
 
+# install cachetool 
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/bin/cachetool.phar https://github.com/gordalina/cachetool/raw/gh-pages/downloads/cachetool-${CACHETOOL}.phar
+/bin/cp -rf /usr/local/src/cachetool.phar /usr/local/bin/cachetool
+chmod +x /usr/local/bin/cachetool
+
 # install tengine
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/pcre-${PCRE}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${PCRE}.tar.gz
@@ -127,7 +134,7 @@ tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
-./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
+./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
 make && make install
 # 
 ## install redis
