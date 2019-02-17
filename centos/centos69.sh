@@ -8,7 +8,7 @@ REDIS="3.2.12"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.43"
 LIB_FREETYPE='2.6.4'
-COMPOSER="1.8.3"
+COMPOSER="1.8.4"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
@@ -286,7 +286,11 @@ http {
     sendfile        on;
     #tcp_nopush     on;
     keepalive_timeout  65;
+    fastcgi_connect_timeout 120s;
+    fastcgi_send_timeout 120s;
+    fastcgi_read_timeout 120s;
     client_body_buffer_size 128k;
+    client_max_body_size 20M;
     gzip  on;
     gzip_min_length 1k;
     gzip_buffers 4 16k;
