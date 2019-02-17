@@ -1,14 +1,14 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.3.0"
+PHP="7.3.2"
 NGINX="2.2.3"
 PCRE="8.36"
 REDIS="4.0.12"
 MARIADB="10.3.10"
 # MYSQL="5.6.42"
 LIB_ZIP="1.2.0"
-COMPOSER="1.8.0"
+COMPOSER="1.8.4"
 PHP_REDIS="4.2.0"
 PHP_YAF="3.0.7"
 COUNTRY="CN"
@@ -99,7 +99,7 @@ tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
-./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
+./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
 make && make install
 
 ## nginx config
@@ -129,6 +129,9 @@ http {
     sendfile        on;
     #tcp_nopush     on;
     keepalive_timeout  65;
+    fastcgi_connect_timeout 120s;
+    fastcgi_send_timeout 120s;
+    fastcgi_read_timeout 120s;
     client_body_buffer_size 128k;
     gzip  on;
     gzip_min_length 1k;
