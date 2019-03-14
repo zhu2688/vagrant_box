@@ -8,6 +8,7 @@ REDIS="3.2.12"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.43"
 LIB_FREETYPE='2.6.4'
+CMAKE='3.7.2'
 COMPOSER="1.8.4"
 PHP_GD='2.1.0'
 PHP_JPEG='9b'
@@ -15,7 +16,6 @@ PHP_REDIS="4.1.1"
 PHP_YAF="3.0.7"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
-PHP_MEMCACHED="3.0.4"
 PHP_MONGODB="1.5.3"
 CACHETOOL="4.0.1"
 COUNTRY="CN"
@@ -39,7 +39,7 @@ fi
 yum clean all
 yum makecache
 /bin/sed -i -e 's/^export.*\/usr\/local\/mysql\/bin.*$/d' /etc/profile
-echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
+echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
 yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
@@ -48,6 +48,13 @@ killall mysql
 killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libjpeg-devel libpng-devel
+
+# install cmake 
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.7/cmake-${CMAKE}.tar.gz
+tar xzf cmake-${CMAKE}.tar.gz
+cd cmake-${CMAKE} || exit 1
+./configure && make && make install
 
 # install freetype
 cd /usr/local/src || exit 1
@@ -91,27 +98,18 @@ chmod +x /etc/init.d/php-fpm
 chkconfig --add php-fpm
 chkconfig php-fpm on
 
-# install libmemcached
-cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/libmemcached-1.0.18.tar.gz https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
-tar xzf libmemcached-1.0.18.tar.gz
-cd libmemcached-1.0.18 || exit 1
-./configure
-make && make install
-
 /usr/local/bin/pecl install yaf-${PHP_YAF}
 /usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
 /usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
-printf "no\n" | /usr/local/bin/pecl install memcached-${PHP_MEMCACHED}
 
 echo "extension=msgpack.so" >> $PHP_INI
 echo "extension=redis.so" >> $PHP_INI
 echo "extension=mysqli.so" >> $PHP_INI
 echo "extension=pdo_mysql.so" >> $PHP_INI
-echo "extension=mongodb.so" >> $PHP_INI
 echo "extension=yaf.so" >> $PHP_INI
+echo "extension=mongodb.so" >> $PHP_INI
 echo "extension=yar.so" >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
