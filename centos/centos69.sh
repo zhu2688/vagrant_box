@@ -38,7 +38,7 @@ fi
 
 yum clean all
 yum makecache
-/bin/sed -i -e 's/^export.*\/usr\/local\/mysql\/bin.*$/d' /etc/profile
+/bin/sed -i -e '/^export.*mysql\/bin.*$/d' /etc/profile
 echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
