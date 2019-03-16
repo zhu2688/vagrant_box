@@ -121,8 +121,7 @@ chmod +x /usr/local/bin/composer
 
 # install cachetool 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/bin/cachetool.phar https://github.com/gordalina/cachetool/raw/gh-pages/downloads/cachetool-${CACHETOOL}.phar
-/bin/cp -rf /usr/local/src/cachetool.phar /usr/local/bin/cachetool
+curl -L -o /usr/local/bin/cachetool https://github.com/gordalina/cachetool/raw/gh-pages/downloads/cachetool-${CACHETOOL}.phar
 chmod +x /usr/local/bin/cachetool
 
 # install tengine
