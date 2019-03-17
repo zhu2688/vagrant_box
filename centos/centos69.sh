@@ -17,6 +17,7 @@ PHP_YAF="3.0.7"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
 PHP_MONGODB="1.5.3"
+PHP_APCU="5.1.17"
 CACHETOOL="4.0.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
@@ -104,6 +105,7 @@ chkconfig php-fpm on
 /usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
+printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
 {
   echo 'extension=msgpack.so'
   echo 'extension=redis.so'
@@ -112,6 +114,7 @@ printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
   echo 'extension=yaf.so'
   echo 'extension=mongodb.so'
   echo 'extension=yar.so'
+  echo 'extension=apcu.so'
 } >> ${PHP_INI}
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
