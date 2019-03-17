@@ -30,7 +30,7 @@ useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
 # yum update 
 # check country
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
-checkCN=`cat $COUNTRY_FILE|grep $COUNTRY`
+checkCN=$(< $COUNTRY_FILE grep $COUNTRY)
 if [[ -n $checkCN ]]; then
   curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
   PHP_SERVER="cn2.php.net"
@@ -40,6 +40,7 @@ yum clean all
 yum makecache
 /bin/sed -i -e '/^export.*mysql\/bin.*$/d' /etc/profile
 echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
+#shellcheck disable=SC1091
 source /etc/profile
 
 yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
@@ -103,14 +104,15 @@ chkconfig php-fpm on
 /usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
-
-echo "extension=msgpack.so" >> $PHP_INI
-echo "extension=redis.so" >> $PHP_INI
-echo "extension=mysqli.so" >> $PHP_INI
-echo "extension=pdo_mysql.so" >> $PHP_INI
-echo "extension=yaf.so" >> $PHP_INI
-echo "extension=mongodb.so" >> $PHP_INI
-echo "extension=yar.so" >> $PHP_INI
+{
+  echo 'extension=msgpack.so'
+  echo 'extension=redis.so'
+  echo 'extension=mysqli.so'
+  echo 'extension=pdo_mysql.so'
+  echo 'extension=yaf.so'
+  echo 'extension=mongodb.so'
+  echo 'extension=yar.so'
+} >> ${PHP_INI}
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 # install compoer 
@@ -141,9 +143,9 @@ tar xzf redis-${REDIS}.tar.gz
 cd redis-${REDIS} || exit 1
 make && make install
 mkdir -p /etc/redis
-cp -f *.conf /etc/redis
-sed -i -e 's/redis_\${REDIS_PORT}/redis-server/' ./utils/install_server.sh
-sed -i -e 's/redis_\$REDIS_PORT/redis-server/' ./utils/install_server.sh
+cp -f ./*.conf /etc/redis
+sed -i -e "s/redis_\${REDIS_PORT}/redis-server/" ./utils/install_server.sh
+sed -i -e "s/redis_\$REDIS_PORT/redis-server/" ./utils/install_server.sh
 cat << CMD | ./utils/install_server.sh
 6379
 /etc/redis/redis.conf
