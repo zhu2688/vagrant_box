@@ -30,7 +30,7 @@ if [ -f "$PATH_PHP_INI" ]; then
   # disable_functions
   /bin/sed -i -e "s/^[;]\{0,1\}disable_functions.*$/disable_functions = ${DISABLE_FUNCTIONS}/" "$PATH_PHP_INI"
   # opcache 
-  /bin/sed -i -e "s/^[;]\{0,1\}opcache.enable.*$/opcache.enable = 1/" "$PATH_PHP_INI"
+  /bin/sed -i -e "s/^[;]\{0,1\}opcache.enable\s\?=.*$/opcache.enable=1/" "$PATH_PHP_INI"
   /bin/sed -i -e '/^zend_extension.*opcache.*$/d' "$PATH_PHP_INI"
   echo "zend_extension=opcache.so" >> "$PATH_PHP_INI"
 else
