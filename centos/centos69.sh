@@ -269,13 +269,14 @@ echo "Creating servers nginx conf"
 (
 cat <<'EOF'
 user www;
-worker_processes  1;
+worker_processes  2;
 
 error_log  logs/error.log;
 #pid        logs/nginx.pid;
 
 events {
-    worker_connections  1024;
+    worker_connections  10240;
+    use epoll;
 }
 http {
     include       mime.types;
@@ -293,6 +294,7 @@ http {
     fastcgi_connect_timeout 120s;
     fastcgi_send_timeout 120s;
     fastcgi_read_timeout 120s;
+    client_header_buffer_size 4k;
     client_body_buffer_size 128k;
     client_max_body_size 20M;
     gzip  on;
