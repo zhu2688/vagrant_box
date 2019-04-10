@@ -281,6 +281,7 @@ events {
 http {
     include       mime.types;
     server_tag "SOEASY4.0";
+    server_info off;
     default_type  application/octet-stream;
 
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
