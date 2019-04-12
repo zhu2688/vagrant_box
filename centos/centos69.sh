@@ -44,6 +44,8 @@ echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$
 #shellcheck disable=SC1091
 source /etc/profile
 
+# update git -> 2.* 
+# yum install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
 # update gcc -> gcc 4.8.2
 curl -o /etc/yum.repos.d/hop5.repo http://www.hop5.in/yum/el6/hop5.repo
 yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
