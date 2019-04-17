@@ -4,7 +4,7 @@
 PHP="7.2.17"
 NGINX="2.3.0"
 PCRE="8.36"
-REDIS="4.0.12"
+REDIS="4.0.14"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.43"
 LIB_FREETYPE='2.6.4'
@@ -32,8 +32,17 @@ useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
 # check country
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
 checkCN=$(< $COUNTRY_FILE grep $COUNTRY)
+
 if [[ -n $checkCN ]]; then
-  curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+  if [[ -f /usr/local/qcloud ]]; then
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.cloud.tencent.com/repo/centos6_base.repo
+      curl -o /etc/yum.repos.d/epel.repo http://mirrors.cloud.tencent.com/repo/epel-6.repo
+  elif [ -f /usr/sbin/aliyun-service ]; then
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+      curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo
+  else
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
+  fi
   PHP_SERVER="cn2.php.net"
 fi
 
@@ -316,7 +325,7 @@ echo "Creating /usr/local/nginx conf"
 (
 cat <<'EOF'
 server {
-     listen       80;
+     listen       80 default;
      server_name  localhost;
      location / {
          root   html;
