@@ -18,7 +18,7 @@ vagrant up
 ```
 
 ## 软件环境
--  vagrant 2.1.4
+-  vagrant 2.2.4
 -  VirtualBox 5.2.18
 -  GuestAdditions 5.2.18
 
@@ -46,6 +46,6 @@ vagrant reload --provision
 ## centos69.sh脚本中可以修改各个软件和扩展的版本号
 * Php7.2
 * Mysql 5.6
-* Redis 3.2
-* Tengine 2.2.2
+* Redis 4.0
+* Tengine 2.3.0
 ```
