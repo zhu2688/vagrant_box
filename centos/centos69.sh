@@ -62,7 +62,7 @@ killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libjpeg-devel libpng-devel
+yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libjpeg-devel libpng-devel libwebp-devel
 
 # install cmake 
 cd /usr/local/src || exit 1
@@ -100,7 +100,7 @@ curl -L -o /usr/local/src/php-${PHP}.tar.gz http://${PHP_SERVER}/get/php-${PHP}.
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --with-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc --with-jpeg-dir=/usr/local --with-freetype-dir=/usr/local
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --with-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc --with-jpeg-dir=/usr/local --with-freetype-dir=/usr/local --with-webp-dir=/usr/local
 make && make install
 
 # php config
