@@ -8,6 +8,7 @@ REDIS="4.0.14"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.43"
 LIB_FREETYPE='2.6.4'
+LIB_ZIP="1.5.2"
 CMAKE='3.7.2'
 COMPOSER="1.8.5"
 PHP_GD='2.1.0'
@@ -50,6 +51,7 @@ yum clean all
 yum makecache
 /bin/sed -i -e '/^export.*mysql\/bin.*$/d' /etc/profile
 echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
+echo '/usr/local/lib64' >> /etc/ld.so.conf
 #shellcheck disable=SC1091
 source /etc/profile
 
@@ -70,6 +72,14 @@ curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.7/cma
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
 ./configure && make && make install
+
+# install libzip 
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/libzip-${LIB_ZIP}.tar.gz https://nih.at/libzip/libzip-${LIB_ZIP}.tar.gz
+tar xzf libzip-${LIB_ZIP}.tar.gz
+cd libzip-${LIB_ZIP} || exit 1
+mkdir -p build 
+cd build && cmake .. && make && make install
 
 # install freetype
 cd /usr/local/src || exit 1
