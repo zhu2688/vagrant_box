@@ -1,12 +1,12 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.2.17"
+PHP="7.2.18"
 NGINX="2.3.0"
 PCRE="8.36"
 REDIS="4.0.14"
 MAIN_MYSQL="5.6"
-MYSQL="5.6.43"
+MYSQL="5.6.44"
 LIB_FREETYPE='2.6.4'
 LIB_ZIP="1.5.2"
 CMAKE='3.7.2'
@@ -54,6 +54,7 @@ echo "export PATH=\"/usr/local/cmake/bin/:/usr/local/mysql/bin:/usr/local/bin:\$
 echo '/usr/local/lib64' >> /etc/ld.so.conf
 #shellcheck disable=SC1091
 source /etc/profile
+ldconfig
 
 # update git -> 2.* 
 # yum install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
