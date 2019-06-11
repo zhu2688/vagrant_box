@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.2.18"
+PHP="7.2.19"
 NGINX="2.3.0"
 PCRE="8.36"
 REDIS="4.0.14"
@@ -9,9 +9,9 @@ MAIN_MYSQL="5.6"
 MYSQL="5.6.44"
 LIB_FREETYPE='2.6.4'
 LIB_ZIP="1.5.2"
+LIB_GD="2.2.5"
 CMAKE='3.7.2'
 COMPOSER="1.8.5"
-PHP_GD='2.1.0'
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
 PHP_YAF="3.0.8"
@@ -100,14 +100,14 @@ make libdir=/usr/lib64 install
 
 # install libgd
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/gd-${PHP_GD}.tar.gz https://github.com/libgd/libgd/archive/gd-${PHP_GD}.tar.gz
-tar xzf gd-${PHP_GD}.tar.gz
-cd libgd-gd-${PHP_GD} || exit 1
-./bootstrap.sh && ./configure && make && make install
+curl -L -o /usr/local/src/libgd-${LIB_GD}.tar.gz https://github.com/libgd/libgd/releases/download/gd-${LIB_GD}/libgd-${LIB_GD}.tar.gz
+tar xzf libgd-${LIB_GD}.tar.gz
+cd libgd-${LIB_GD} || exit 1
+./configure && make && make install
 
 # install php 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/php-${PHP}.tar.gz http://${PHP_SERVER}/get/php-${PHP}.tar.gz/from/this/mirror
+curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 
 cd php-${PHP} || exit 1
