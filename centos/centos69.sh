@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.2.19"
+PHP="7.2.20"
 NGINX="2.3.0"
 PCRE="8.36"
 REDIS="4.0.14"
@@ -11,7 +11,7 @@ LIB_FREETYPE='2.6.4'
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 CMAKE='3.7.2'
-COMPOSER="1.8.5"
+COMPOSER="1.8.6"
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
 PHP_YAF="3.0.8"
