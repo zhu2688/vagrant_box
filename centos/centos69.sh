@@ -7,7 +7,7 @@ PCRE="8.36"
 REDIS="4.0.14"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.44"
-LIB_FREETYPE='2.6.4'
+LIB_FREETYPE='2.9.1'
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 CMAKE='3.7.2'
@@ -84,7 +84,7 @@ cd build && cmake .. && make && make install
 
 # install freetype
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/freetype-${LIB_FREETYPE}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
+curl -L -o /usr/local/src/freetype-${LIB_FREETYPE}.tar.gz https://sourceforge.net/projects/freetype/files/freetype2/${LIB_FREETYPE}/freetype-${LIB_FREETYPE}.tar.gz/download
 tar xzf freetype-${LIB_FREETYPE}.tar.gz
 cd freetype-${LIB_FREETYPE} || exit 1
 ./configure && make && make install
