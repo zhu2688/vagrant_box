@@ -2,7 +2,7 @@
 #Provided by @soeasy
 
 PHP="7.2.20"
-NGINX="2.3.0"
+NGINX="2.3.1"
 PCRE="8.36"
 REDIS="4.0.14"
 MAIN_MYSQL="5.6"
