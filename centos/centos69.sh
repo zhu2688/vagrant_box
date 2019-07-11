@@ -3,14 +3,14 @@
 
 PHP="7.2.20"
 NGINX="2.3.1"
-PCRE="8.36"
+PCRE="8.43"
 REDIS="4.0.14"
 MAIN_MYSQL="5.6"
 MYSQL="5.6.44"
 LIB_FREETYPE='2.9.1'
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
-CMAKE='3.7.2'
+CMAKE='3.10.3'
 COMPOSER="1.8.6"
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
@@ -69,7 +69,7 @@ yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng
 
 # install cmake 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.7/cmake-${CMAKE}.tar.gz
+curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.10/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
 ./configure && make && make install
