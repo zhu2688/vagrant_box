@@ -1,16 +1,16 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.3.2"
-NGINX="2.2.3"
-PCRE="8.36"
-REDIS="4.0.12"
+PHP="7.3.7"
+NGINX="2.3.1"
+PCRE="8.43"
+REDIS="4.0.14"
 MARIADB="10.3.10"
 # MYSQL="5.6.42"
-LIB_ZIP="1.2.0"
-COMPOSER="1.8.4"
+LIB_ZIP="1.5.2"
+COMPOSER="1.8.6"
 PHP_REDIS="4.2.0"
-PHP_YAF="3.0.7"
+PHP_YAF="3.0.8"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
@@ -24,11 +24,19 @@ RELEASE=`cat /etc/redhat-release`
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
 # yum update 
-# check country
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
-checkCN=`cat $COUNTRY_FILE|grep $COUNTRY`
+checkCN=$(< $COUNTRY_FILE grep $COUNTRY)
+
 if [[ -n $checkCN ]]; then
-  curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+  if [[ -f /usr/local/qcloud ]]; then
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.cloud.tencent.com/repo/centos7_base.repo
+      curl -o /etc/yum.repos.d/epel.repo http://mirrors.cloud.tencent.com/repo/epel-7.repo
+  elif [ -f /usr/sbin/aliyun-service ]; then
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+      curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+  else
+      curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+  fi
   PHP_SERVER="cn2.php.net"
 fi
 
@@ -50,12 +58,12 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libzip-${LIB_ZIP}.tar.gz https://nih.at/libzip/libzip-${LIB_ZIP}.tar.gz
 tar xzf libzip-${LIB_ZIP}.tar.gz
 cd libzip-${LIB_ZIP} || exit 1
-./configure && make && make install
-/bin/sed -i -e 's/^#include <zipconf.h>.*$/#include <\/usr\/local\/lib\/libzip\/include\/zipconf.h>/' /usr/local/include/zip.h
+mkdir -p build 
+cd build && cmake .. && make && make install
 
 # install php 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/php-${PHP}.tar.gz http://${PHP_SERVER}/get/php-${PHP}.tar.gz/from/this/mirror
+curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
 ./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --with-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc
@@ -65,8 +73,6 @@ make && make install
 /bin/mkdir -p /usr/local/etc/php-fpm.d/
 /bin/cp ./sapi/fpm/php-fpm.service /usr/lib/systemd/system/php-fpm.service -r
 /bin/sed -i -e 's/^PIDFile=.*$/PIDFile=\/var\/run\/php-fpm.pid/' /usr/lib/systemd/system/php-fpm.service
-
-PIDFile=/usr/local/var/run/php-fpm.pid
 
 /bin/cp ./php.ini-development $PHP_INI -r
 /bin/cp ./sapi/fpm/php-fpm.conf /usr/local/etc/php-fpm.conf -r
@@ -83,8 +89,6 @@ echo "extension=mysqli.so" >> $PHP_INI
 echo "extension=pdo_mysql.so" >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
-
-
 
 # install compoer 
 cd /usr/local/src || exit 1
@@ -108,17 +112,19 @@ echo "Creating servers nginx conf"
 (
 cat <<'EOF'
 user www;
-worker_processes  1;
+worker_processes  2;
 
 error_log  logs/error.log;
-pid        /var/run/nginx.pid;
+#pid        logs/nginx.pid;
 
 events {
-    worker_connections  1024;
+    worker_connections  10240;
+    use epoll;
 }
 http {
     include       mime.types;
     server_tag "SOEASY4.0";
+    server_info off;
     default_type  application/octet-stream;
 
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -132,7 +138,9 @@ http {
     fastcgi_connect_timeout 120s;
     fastcgi_send_timeout 120s;
     fastcgi_read_timeout 120s;
+    client_header_buffer_size 4k;
     client_body_buffer_size 128k;
+    client_max_body_size 20M;
     gzip  on;
     gzip_min_length 1k;
     gzip_buffers 4 16k;
@@ -149,7 +157,7 @@ echo "Creating /usr/local/nginx conf"
 (
 cat <<'EOF'
 server {
-     listen       80;
+     listen       80 default;
      server_name  localhost;
      location / {
          root   html;
