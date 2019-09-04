@@ -10,7 +10,7 @@ MYSQL="5.6.45"
 LIB_FREETYPE='2.9.1'
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
-CMAKE='3.10.3'
+CMAKE='3.11.4'
 COMPOSER="1.9.0"
 PHP_JPEG='9b'
 PHP_REDIS="4.1.1"
@@ -69,7 +69,7 @@ yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng
 
 # install cmake 
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.10/cmake-${CMAKE}.tar.gz
+curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.11/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
 ./configure && make && make install
@@ -135,11 +135,16 @@ printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
   echo 'extension=redis.so'
   echo 'extension=mysqli.so'
   echo 'extension=pdo_mysql.so'
-  echo 'extension=yaf.so'
   echo 'extension=mongodb.so'
   echo 'extension=yar.so'
   echo 'extension=apcu.so'
+  echo 'yaf.environ=dev'
 } >> ${PHP_INI}
+
+echo '[yaf]
+extension            = yaf.so
+yaf.environ          = dev
+' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 # install compoer 
@@ -328,6 +333,7 @@ http {
     gzip_disable "MSIE [1-6]\.";
     gzip_types text/plain application/javascript application/x-javascript text/css application/xml image/jpeg;
     include servers/default.conf;
+    #include servers/web_app.conf;
 }
 EOF
 ) | tee /usr/local/nginx/conf/nginx.conf
@@ -349,5 +355,48 @@ server {
  }
 EOF
 ) | tee /usr/local/nginx/conf/servers/default.conf
+
+
+echo "Create web base app conf"
+(
+cat <<'EOF'
+server {
+    listen       80;
+    server_name  app.test.com;
+    charset utf-8;
+    access_log  logs/app-access.log  main;
+    error_log   logs/app-error.log;
+    root /www/web_app/public;
+    index index.htm index.html index.php;
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+    }
+    location = /robots.txt {
+        access_log off;
+        log_not_found off;
+    }
+    location = /sitemap.xml {
+        access_log off;
+        log_not_found off;
+    }
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+    if ($request_method ~ ^(HEAD)$ ) {
+      return 200;
+    }
+    location / {
+        try_files $uri $uri/ /index.php?/$request_uri;
+    }
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
+EOF
+) | tee /usr/local/nginx/conf/servers/web_app.conf
 
 reboot
