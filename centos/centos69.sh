@@ -24,8 +24,8 @@ COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
 MYSQLUSER="mysql"
+MYSQLDATAPATH="/data"
 PHP_INI="/etc/php.ini"
-PHP_SERVER="php.net"
 
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
@@ -44,7 +44,6 @@ if [[ -n $checkCN ]]; then
   else
       curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS6-Base-163.repo
   fi
-  PHP_SERVER="cn2.php.net"
 fi
 
 yum clean all
@@ -193,7 +192,7 @@ useradd -r -g $MYSQLUSER -s /bin/false $MYSQLUSER
 cd /usr/local/src || exit 1
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
 cmake .
@@ -201,7 +200,7 @@ make && make install
 
 ## install mysql init
 cd /usr/local/mysql || exit 1
-./scripts/mysql_install_db --user=$MYSQLUSER
+./scripts/mysql_install_db --user=$MYSQLUSER --datadir=$MYSQLDATAPATH
 cp support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
 chkconfig mysql on
