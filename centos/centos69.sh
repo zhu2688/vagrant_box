@@ -23,8 +23,9 @@ CACHETOOL="4.0.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
+DATAPATH="/data"
 MYSQLUSER="mysql"
-MYSQLDATAPATH="/data"
+MYSQLDATAPATH="/data/mysql"
 PHP_INI="/etc/php.ini"
 
 groupadd $WWWUSER
@@ -190,12 +191,13 @@ CMD
 groupadd $MYSQLUSER
 useradd -r -g $MYSQLUSER -s /bin/false $MYSQLUSER
 cd /usr/local/src || exit 1
+mkdir -p ${DATAPATH}
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
-cmake .
+cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4
 make && make install
 
 ## install mysql init
