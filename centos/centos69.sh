@@ -60,6 +60,7 @@ ldconfig
 # yum install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
 # update gcc -> gcc 4.8.2
 curl -o /etc/yum.repos.d/hop5.repo http://www.hop5.in/yum/el6/hop5.repo
+yum -y remove mysql-server mysql mysql-libs
 yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
 killall php-fpm
 killall mysql
@@ -138,12 +139,11 @@ printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
   echo 'extension=mongodb.so'
   echo 'extension=yar.so'
   echo 'extension=apcu.so'
-  echo 'yaf.environ=dev'
 } >> ${PHP_INI}
 
 echo '[yaf]
-extension            = yaf.so
-yaf.environ          = dev
+extension=yaf.so
+yaf.environ=dev
 ' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
@@ -206,6 +206,21 @@ cd /usr/local/mysql || exit 1
 cp support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
 chkconfig mysql on
+
+## mysql config
+echo "Creating /etc/my.conf"
+(
+cat <<EOF
+[mysqld]
+datadir = $MYSQLDATAPATH
+socket = /tmp/mysql.sock
+user = $MYSQLUSER
+symbolic-links=0
+[mysqld_safe]
+log-error = /var/log/mysqld.log
+pid-file = /var/run/mysqld.pid
+EOF
+) | tee /etc/my.conf
 
 ## nginx config
 echo "Creating /etc/init.d/nginx startup script"
@@ -358,7 +373,7 @@ EOF
 ) | tee /usr/local/nginx/conf/servers/default.conf
 
 
-echo "Create web base app conf"
+echo "Create /usr/local/nginx/conf/servers/web_app.conf"
 (
 cat <<'EOF'
 server {
