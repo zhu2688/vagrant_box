@@ -197,7 +197,7 @@ rm /var/lib/mysql/ib* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
-cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4
+cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4 --DDEFAULT_COLLATION=utf8mb4_bin
 make && make install
 
 ## install mysql init
