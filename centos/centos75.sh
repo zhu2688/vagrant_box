@@ -1,23 +1,29 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.3.7"
+PHP="7.3.9"
 NGINX="2.3.1"
 PCRE="8.43"
 REDIS="4.0.14"
 MARIADB="10.3.10"
-# MYSQL="5.6.42"
+# MYSQL="5.6.45"
 LIB_ZIP="1.5.2"
-COMPOSER="1.8.6"
+LIB_GD="2.2.5"
+CMAKE='3.11.4'
+COMPOSER="1.9.0"
 PHP_REDIS="4.2.0"
 PHP_YAF="3.0.8"
+PHP_YAR="2.0.5"
+PHP_MSGPACK="2.0.3"
+PHP_MONGODB="1.5.3"
+PHP_APCU="5.1.17"
+CACHETOOL="4.0.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
 DB_USER="mysql"
 DB_DATA_PATH="/data/mysql"
 PHP_INI="/etc/php.ini"
-PHP_SERVER="php.net"
 REDIS_INI="/etc/redis/redis.conf"
 
 RELEASE=`cat /etc/redhat-release`
@@ -37,7 +43,6 @@ if [[ -n $checkCN ]]; then
   else
       curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
   fi
-  PHP_SERVER="cn2.php.net"
 fi
 
 yum clean all
@@ -53,6 +58,13 @@ killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel
 
+# install cmake 
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.11/cmake-${CMAKE}.tar.gz
+tar xzf cmake-${CMAKE}.tar.gz
+cd cmake-${CMAKE} || exit 1
+./configure && make && make install
+
 # install libzip 
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libzip-${LIB_ZIP}.tar.gz https://nih.at/libzip/libzip-${LIB_ZIP}.tar.gz
@@ -60,6 +72,13 @@ tar xzf libzip-${LIB_ZIP}.tar.gz
 cd libzip-${LIB_ZIP} || exit 1
 mkdir -p build 
 cd build && cmake .. && make && make install
+
+# install libgd
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/libgd-${LIB_GD}.tar.gz https://github.com/libgd/libgd/releases/download/gd-${LIB_GD}/libgd-${LIB_GD}.tar.gz
+tar xzf libgd-${LIB_GD}.tar.gz
+cd libgd-${LIB_GD} || exit 1
+./configure && make && make install
 
 # install php 
 cd /usr/local/src || exit 1
@@ -235,7 +254,7 @@ curl -L -o /usr/local/src/mariadb-${MARIADB}.tar.gz https://downloads.mariadb.or
 tar xzf mariadb-${MARIADB}.tar.gz
 cd mariadb-${MARIADB} || exit 1
 rm -f CmakeCache.txt
-cmake .
+cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
 make && make install
 
 ## install mariadb init
