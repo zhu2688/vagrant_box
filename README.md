@@ -5,14 +5,22 @@ vagrant box php7开发环境 php5的详见 [php5分支](https://github.com/zhu26
 github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 
 ## 下载box后本地安装
-- 下载box [https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box) 
 - 下载Vagrantfile [https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/Vagrantfile](https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/Vagrantfile)
+
+### centos6 
+- 下载box [https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box](https://github.com/zhu2688/vagrant_box/releases/download/0.0.2/centos-6.9-x64.box)
 - 下载centos69.sh [https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/centos69.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/centos69.sh)
 
+### centos7
+- 下载box [https://github.com/zhu2688/vagrant_box/releases/download/0.0.3/centos-7.4-x64.box](https://github.com/zhu2688/vagrant_box/releases/download/0.0.3/centos-7.4-x64.box)
+- 下载centos75.sh [https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/centos75.sh](https://raw.githubusercontent.com/zhu2688/vagrant_box/php7/centos/centos75.sh)
 
 ```shell
 ## 把上面三个脚本放到当前目录
+## centos 6
 vagrant box add php7 centos-6.9-x64.box
+## centos 7
+## vagrant box add php7 centos-7.4-x64.box
 vagrant up
 
 ```
@@ -28,7 +36,8 @@ vagrant up
 ```shell
   ├── centos
   │   ├── centos-6.9-x64.box  基本box
-  │   ├── centos69.sh    初始化脚本
+  │   ├── centos69.sh    centos6初始化脚本
+  │   ├── centos74.sh    centos7初始化脚本
   │   ├── Vagrantfile    Vagrantfile 文件
 ```
 ## Provision
