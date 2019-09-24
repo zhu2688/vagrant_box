@@ -56,7 +56,7 @@ killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel
+yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel libwebp-devel
 
 # update gcc
 gccVersion=`gcc -dumpversion | cut -f1-3 -d.`
