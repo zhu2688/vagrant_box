@@ -1,12 +1,11 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.3.9"
-NGINX="2.3.1"
+PHP="7.3.10"
+NGINX="2.3.2"
 PCRE="8.43"
 REDIS="4.0.14"
-MARIADB="10.3.10"
-# MYSQL="5.6.45"
+MYSQL="8.0.16"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 CMAKE='3.11.4'
@@ -51,12 +50,12 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel psmisc
+yum -y install epel-release telnet git wget ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel psmisc
 killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel
+yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel
 
 # install cmake 
 cd /usr/local/src || exit 1
@@ -85,7 +84,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-zlib --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --with-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc
 make && make install
 
 # php config
@@ -250,9 +249,9 @@ useradd -r -g $DB_USER -s /bin/false $DB_USER
 mkdir -p $DB_DATA_PATH
 chown -R $DB_USER:$DB_USER $DB_DATA_PATH
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/mariadb-${MARIADB}.tar.gz https://downloads.mariadb.org/interstitial/mariadb-${MARIADB}/source/mariadb-${MARIADB}.tar.gz
-tar xzf mariadb-${MARIADB}.tar.gz
-cd mariadb-${MARIADB} || exit 1
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://downloads.mysql.com/archives/get/file/mysql-boost-${MYSQL}.tar.gz
+tar xzf mysql-${MYSQL}.tar.gz
+cd mysql-${MYSQL} || exit 1
 rm -f CmakeCache.txt
 cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
 make && make install
