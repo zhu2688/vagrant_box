@@ -9,6 +9,7 @@ MYSQL="8.0.16"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 CMAKE='3.11.4'
+GCC='5.4.0'
 COMPOSER="1.9.0"
 PHP_REDIS="4.2.0"
 PHP_YAF="3.0.8"
@@ -50,12 +51,30 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet git wget ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel psmisc
+yum -y install epel-release telnet git wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
 killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel
+
+# update gcc
+gccVersion=`gcc -dumpversion | cut -f1-3 -d.`
+if [ $GCC != $gccVersion ];then
+echo "Need Update Gcc about 1 hour"
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/gcc-${GCC}.tar.gz http://ftp.gnu.org/gnu/gcc/gcc-${GCC}/gcc-${GCC}.tar.gz
+tar xzf gcc-${GCC}.tar.gz
+cd gcc-${GCC} || exit 1
+./contrib/download_prerequisites
+mkdir -p build
+cd build/
+../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
+make
+make install
+export PATH=$PATH:/usr/local/gcc/bin
+yum -y remove gcc
+fi
 
 # install cmake 
 cd /usr/local/src || exit 1
@@ -243,20 +262,7 @@ WantedBy=multi-user.target
 EOF
 ) | tee /usr/lib/systemd/system/redis.service
 
-## install mariadb
-groupadd $DB_USER
-useradd -r -g $DB_USER -s /bin/false $DB_USER
-mkdir -p $DB_DATA_PATH
-chown -R $DB_USER:$DB_USER $DB_DATA_PATH
-cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://downloads.mysql.com/archives/get/file/mysql-boost-${MYSQL}.tar.gz
-tar xzf mysql-${MYSQL}.tar.gz
-cd mysql-${MYSQL} || exit 1
-rm -f CmakeCache.txt
-cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
-make && make install
-
-## install mariadb init
+## install mysql init
 chmod +x /usr/lib/systemd/system/php-fpm.service
 chmod +x /usr/lib/systemd/system/redis.service
 chmod +x /usr/lib/systemd/system/nginx.service
@@ -273,4 +279,17 @@ systemctl daemon-reload
 systemctl start php-fpm.service
 systemctl start redis.service
 systemctl start nginx.service
+
+## install MySQL
+groupadd $DB_USER
+useradd -r -g $DB_USER -s /bin/false $DB_USER
+mkdir -p $DB_DATA_PATH
+chown -R $DB_USER:$DB_USER $DB_DATA_PATH
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://downloads.mysql.com/archives/get/file/mysql-boost-${MYSQL}.tar.gz
+tar xzf mysql-${MYSQL}.tar.gz
+cd mysql-${MYSQL} || exit 1
+rm -f CmakeCache.txt
+cmake . -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
+make && make install
 
