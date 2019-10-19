@@ -26,7 +26,7 @@ vagrant up
 ```
 
 ## 软件环境
--  vagrant 2.2.4
+-  vagrant 2.2.6
 -  VirtualBox 5.2.18
 -  GuestAdditions 5.2.18
 
@@ -57,4 +57,19 @@ vagrant reload --provision
 * Mysql 5.6
 * Redis 4.0
 * Tengine 2.3.0
+```
+
+## 服务管理 
+```shell
+## CentOS6
+service php-fpm stop 
+service php-fpm start
+service nginx stop 
+service nginx start 
+service mysql stop 
+service mysql start
+service redis-server stop
+service redis-server start
+
+## Centos7
 ```
