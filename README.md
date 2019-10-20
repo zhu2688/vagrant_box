@@ -27,7 +27,7 @@ vagrant up
 
 ## 软件环境
 -  vagrant 2.2.6
--  VirtualBox 5.2.18
+-  VirtualBox 5.2.34
 -  GuestAdditions 5.2.18
 
 ## 简介
