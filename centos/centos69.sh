@@ -208,7 +208,7 @@ chkconfig --add mysql
 chkconfig mysql on
 
 ## mysql config
-echo "Creating /etc/my.conf"
+echo "Creating /etc/my.cnf"
 (
 cat <<EOF
 [mysqld]
@@ -220,7 +220,7 @@ symbolic-links=0
 log-error = /var/log/mysqld.log
 pid-file = /var/run/mysqld.pid
 EOF
-) | tee /etc/my.conf
+) | tee /etc/my.cnf
 
 ## nginx config
 echo "Creating /etc/init.d/nginx startup script"
