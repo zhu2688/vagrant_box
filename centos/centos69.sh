@@ -199,7 +199,7 @@ curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com/Downloads/
 tar xzf mysql-${MYSQL}.tar.gz
 cd mysql-${MYSQL} || exit 1
 cmake . -DMYSQL_DATADIR=$MYSQLDATAPATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
-make && make install
+make && make install && make clean
 
 ## install mysql init
 cd /usr/local/mysql || exit 1
