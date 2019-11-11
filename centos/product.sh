@@ -49,10 +49,10 @@ if [ ! -z $PHP_YAF_ENVIRON ]; then
 fi
 
 ## 2 redis config
-sed -i "s/^bind.*/bind 127.0.0.1/" $REDIS_INI
-sed -i "s/# maxmemory <bytes>/maxmemory ${REDIS_MAX_MEMORY}/" $REDIS_INI
-sed -i 's/# maxmemory-policy noeviction/maxmemory-policy volatile-lru/' $REDIS_INI
-sed -i "s/appendonly no/appendonly ${REDIS_APPEND_ONLY}/" $REDIS_INI
-sed -i "s/^daemonize no/daemonize ${REDIS_DAEMONIZE}/" $REDIS_INI
+/bin/sed -i "s/^bind.*/bind 127.0.0.1/" $REDIS_INI
+/bin/sed -i "s/# maxmemory <bytes>/maxmemory ${REDIS_MAX_MEMORY}/" $REDIS_INI
+/bin/sed -i 's/# maxmemory-policy noeviction/maxmemory-policy volatile-lru/' $REDIS_INI
+/bin/sed -i "s/appendonly no/appendonly ${REDIS_APPEND_ONLY}/" $REDIS_INI
+/bin/sed -i "s/^daemonize no/daemonize ${REDIS_DAEMONIZE}/" $REDIS_INI
 
 ## 3 mysql config
