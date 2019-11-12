@@ -205,6 +205,7 @@ make && make install && make clean
 cd /usr/local/mysql || exit 1
 ./scripts/mysql_install_db --user=$MYSQLUSER --datadir=$MYSQLDATAPATH
 cp support-files/mysql.server /etc/init.d/mysql
+cp -f support-files/mysql.server /etc/init.d/mysql
 chkconfig --add mysql
 chkconfig mysql on
 
