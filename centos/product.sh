@@ -1,6 +1,10 @@
 #!/bin/bash
 #Provided by @soeasy
 
+log(){
+    Time=$(date +%F" "%T)
+    echo "$Time [$1]: $2" >>/opt/product_shell.log 2>&1
+}
 PHP_EXPOSE="Off"
 PHP_DATE_TIMEZONE="PRC"
 PHP_MAX_EXECUTION_TIME="90"
@@ -19,6 +23,11 @@ REDIS_DAEMONIZE="no"
 
 MYSQL_CONF="/etc/my.cnf"
 MYSQL_BIND_ADDRESS="127.0.0.1"
+
+NGINX_CONF="/usr/local/nginx/conf/nginx.conf"
+
+SYSCTL_CONF="/etc/sysctl.conf"
+LIMITS_CONF="/etc/security/limits.conf"
 
 ## 1 php config
 if ! command -v php
@@ -70,3 +79,34 @@ fi
 if [ ! -f "$MYSQL_CONF" ]; then
   echo "$MYSQL_CONF is not exist!" && exit 1
 fi
+
+/bin/sed -i -e '/^innodb_data_file_path.*$/d' $MYSQL_CONF
+/bin/sed -i -e '/^max_connections.*$/d' $MYSQL_CONF
+/bin/sed -i -e '/^connect-timeout.*$/d' $MYSQL_CONF
+
+echo 'innodb_data_file_path=ibdata1:50M:autoextend' >> $MYSQL_CONF
+echo 'max_connections=500' >> $MYSQL_CONF
+echo 'connect-timeout=10' >> $MYSQL_CONF
+#todo
+
+/usr/local/mysql/bin/mysql -uroot <<-EOF
+DELETE FROM mysql.user where user='' or (Host != '127.0.0.1' and Host !='localhost');
+flush privileges;
+EOF
+
+## 4 nginx config
+if [ ! -f "$NGINX_CONF" ]; then
+  echo "$NGINX_CONF is not exist!" && exit 1
+fi
+
+/usr/bin/git clone https://github.com/zhu2688/nginx-base-badbot-blocker /etc/nginx
+cd /etc/nginx || exit 1
+git pull
+
+## 5 ssl
+/usr/bin/git clone https://github.com/Neilpang/acme.sh.git /etc/acme.sh
+cd /etc/acme.sh || exit 1
+git pull
+
+## 6 /etc/sysctl.conf
+
