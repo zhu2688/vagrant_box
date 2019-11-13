@@ -30,7 +30,7 @@ PHP_INI="/etc/php.ini"
 
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
-# yum update 
+# yum update
 # check country
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
 checkCN=$(< $COUNTRY_FILE grep $COUNTRY)
@@ -57,31 +57,31 @@ echo '/lib64' >> /etc/ld.so.conf
 source /etc/profile
 ldconfig
 
-# update git -> 2.* 
+# update git -> 2.*
 # yum install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
 # update gcc -> gcc 4.8.2
 curl -o /etc/yum.repos.d/hop5.repo http://www.hop5.in/yum/el6/hop5.repo
 yum -y remove mysql-server mysql mysql-libs
-yum -y install epel-release telnet git wget cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
+yum -y install epel-release telnet git wget ntpdate cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
 killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
 yum -y install libxml2 libxml2-devel libcurl libcurl-devel freetype-devel libpng libjpeg-devel libpng-devel libwebp-devel
 
-# install cmake 
+# install cmake
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.12/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
 ./configure && make && make install && make clean
 
-# install libzip 
+# install libzip
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libzip-${LIB_ZIP}.tar.gz https://nih.at/libzip/libzip-${LIB_ZIP}.tar.gz
 tar xzf libzip-${LIB_ZIP}.tar.gz
 cd libzip-${LIB_ZIP} || exit 1
-mkdir -p build 
+mkdir -p build
 cd build && cmake .. && make && make install
 
 # install freetype
@@ -107,7 +107,7 @@ tar xzf libgd-${LIB_GD}.tar.gz
 cd libgd-${LIB_GD} || exit 1
 ./configure && make && make install
 
-# install php 
+# install php
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
@@ -148,13 +148,13 @@ yaf.environ=dev
 ' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
-# install compoer 
+# install compoer
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
 /bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
 chmod +x /usr/local/bin/composer
 
-# install cachetool 
+# install cachetool
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/bin/cachetool https://github.com/gordalina/cachetool/raw/gh-pages/downloads/cachetool-${CACHETOOL}.phar
 chmod +x /usr/local/bin/cachetool
@@ -168,7 +168,7 @@ tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
 ./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-http_geoip_module
 make && make install
-# 
+#
 ## install redis
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/redis-${REDIS}.tar.gz http://download.redis.io/releases/redis-${REDIS}.tar.gz
