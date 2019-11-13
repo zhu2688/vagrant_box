@@ -5,6 +5,8 @@ log(){
     Time=$(date +%F" "%T)
     echo "$Time [$1]: $2" >>/opt/product_shell.log 2>&1
 }
+MEM_TOTAL=`free -m | grep Mem | awk '{print  $2}'`
+
 PHP_EXPOSE="Off"
 PHP_DATE_TIMEZONE="PRC"
 PHP_MAX_EXECUTION_TIME="90"
@@ -29,6 +31,13 @@ NGINX_CONF="/usr/local/nginx/conf/nginx.conf"
 SYSCTL_CONF="/etc/sysctl.conf"
 LIMITS_CONF="/etc/security/limits.conf"
 
+DATA_NGINX_PATH="/data/nginx"
+DATA_SHELL_PATH="/data/shell"
+DATA_WWW_PATH="/data/www"
+## sys service
+/sbin/chkconfig crond on
+/sbin/service crond start
+
 ## 1 php config
 if ! command -v php
 then
@@ -52,7 +61,7 @@ fi
 /bin/sed -i -e "s/^memory_limit =.*$/memory_limit = ${PHP_MEMORY_LIMIT}/" "$PATH_PHP_INI"
 # disable_functions
 /bin/sed -i -e "s/^[;]\{0,1\}disable_functions.*$/disable_functions = ${PHP_DISABLE_FUNCTIONS}/" "$PATH_PHP_INI"
-# opcache 
+# opcache
 /bin/sed -i -e "s/^[;]\{0,1\}opcache.enable\s\?=.*$/opcache.enable=1/" "$PATH_PHP_INI"
 /bin/sed -i -e '/^zend_extension.*opcache.*$/d' "$PATH_PHP_INI"
 echo "zend_extension=opcache.so" >> "$PATH_PHP_INI"
@@ -80,13 +89,26 @@ if [ ! -f "$MYSQL_CONF" ]; then
   echo "$MYSQL_CONF is not exist!" && exit 1
 fi
 
+if [[ ${MEM_TOTAL} -gt 1024 && ${MEM_TOTAL} -lt 2048 ]]; then
+  InnodbBufferPoolSize=256M
+elif [[ ${MEM_TOTAL} -ge 2048 && ${MEM_TOTAL} -lt 4096 ]]; then
+  InnodbBufferPoolSize=512M
+else
+  InnodbBufferPoolSize=1G
+fi
+
 /bin/sed -i -e '/^innodb_data_file_path.*$/d' $MYSQL_CONF
+/bin/sed -i -e '/^innodb_buffer_pool_size.*$/d' $MYSQL_CONF
 /bin/sed -i -e '/^max_connections.*$/d' $MYSQL_CONF
 /bin/sed -i -e '/^connect-timeout.*$/d' $MYSQL_CONF
+/bin/sed -i -e '/^innodb_lock_wait_timeout.*$/d' $MYSQL_CONF
 
 echo 'innodb_data_file_path=ibdata1:50M:autoextend' >> $MYSQL_CONF
+echo "innodb_buffer_pool_size=${InnodbBufferPoolSize}" >> $MYSQL_CONF
 echo 'max_connections=500' >> $MYSQL_CONF
 echo 'connect-timeout=10' >> $MYSQL_CONF
+echo 'innodb_lock_wait_timeout=50' >> $MYSQL_CONF
+
 #todo
 
 /usr/local/mysql/bin/mysql -uroot <<-EOF
@@ -109,4 +131,3 @@ cd /etc/acme.sh || exit 1
 git pull
 
 ## 6 /etc/sysctl.conf
-
