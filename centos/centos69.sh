@@ -24,6 +24,7 @@ COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
 DATAPATH="/data"
+WWWDATAPATH="/data/www"
 MYSQLUSER="mysql"
 MYSQLDATAPATH="/data/mysql"
 PHP_INI="/etc/php.ini"
@@ -193,6 +194,7 @@ groupadd $MYSQLUSER
 useradd -r -g $MYSQLUSER -s /bin/false $MYSQLUSER
 cd /usr/local/src || exit 1
 mkdir -p ${DATAPATH}
+mkdir -p ${WWWDATAPATH}
 rm /usr/local/mysql/* -rf
 rm /var/lib/mysql/ib* -rf
 curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com/Downloads/MySQL-${MAIN_MYSQL}/mysql-${MYSQL}.tar.gz
@@ -384,7 +386,7 @@ server {
     charset utf-8;
     access_log  logs/app-access.log  main;
     error_log   logs/app-error.log;
-    root /www/web_app/public;
+    root /data/www/web_app/public;
     index index.htm index.html index.php;
     location = /favicon.ico {
         access_log off;
