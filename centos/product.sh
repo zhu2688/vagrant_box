@@ -31,12 +31,14 @@ NGINX_CONF="/usr/local/nginx/conf/nginx.conf"
 SYSCTL_CONF="/etc/sysctl.conf"
 LIMITS_CONF="/etc/security/limits.conf"
 
-DATA_NGINX_PATH="/data/nginx"
+DATA_ACMESH_PATH="/data/acme.sh"
 DATA_SHELL_PATH="/data/shell"
 DATA_WWW_PATH="/data/www"
-## sys service
-/sbin/chkconfig crond on
-/sbin/service crond start
+DATA_NGINX_BADBOT_PATH="/data/nginx/badbot"
+
+CRONTAB_PATH="/var/spool/cron/root"
+
+/bin/mkdir -p ${DATA_NGINX_PATH} ${DATA_SHELL_PATH} ${DATA_WWW_PATH}
 
 ## 1 php config
 if ! command -v php
@@ -121,13 +123,23 @@ if [ ! -f "$NGINX_CONF" ]; then
   echo "$NGINX_CONF is not exist!" && exit 1
 fi
 
-/usr/bin/git clone https://github.com/zhu2688/nginx-base-badbot-blocker /etc/nginx
-cd /etc/nginx || exit 1
+/usr/bin/git clone https://github.com/zhu2688/nginx-base-badbot-blocker ${DATA_NGINX_BADBOT_PATH}
+cd ${DATA_NGINX_BADBOT_PATH} || exit 1
 git pull
 
 ## 5 ssl
-/usr/bin/git clone https://github.com/Neilpang/acme.sh.git /etc/acme.sh
-cd /etc/acme.sh || exit 1
+/usr/bin/git clone https://github.com/Neilpang/acme.sh.git ${DATA_ACMESH_PATH}
+cd ${DATA_ACMESH_PATH} || exit 1
 git pull
 
 ## 6 /etc/sysctl.conf
+sysctl -p
+
+## 7 sys service
+/sbin/chkconfig crond on
+if [ -a ${CRONTAB_PATH} ]; then
+	sed -i "/^.*ntpdate.*$/d" ${CRONTAB_PATH}
+    sed -i "/^.*db_backup.*$/d" ${CRONTAB_PATH}
+fi
+echo "0 2 * * * (/usr/sbin/ntpdate ntp1.aliyun.com && /sbin/hwclock -w) > /dev/null 2>&1" >> ${CRONTAB_PATH}
+echo "10 0 * * * /data/www/admin/application/bin/db_backup.sh >> /data/www/admin/application/logs/crond.log 2>&1 &" >> ${CRONTAB_PATH}
