@@ -136,10 +136,26 @@ git pull
 sysctl -p
 
 ## 7 sys service
-/sbin/chkconfig crond on
 if [ -a ${CRONTAB_PATH} ]; then
 	sed -i "/^.*ntpdate.*$/d" ${CRONTAB_PATH}
     sed -i "/^.*db_backup.*$/d" ${CRONTAB_PATH}
 fi
 echo "0 2 * * * (/usr/sbin/ntpdate ntp1.aliyun.com && /sbin/hwclock -w) > /dev/null 2>&1" >> ${CRONTAB_PATH}
 echo "10 0 * * * /data/www/admin/application/bin/db_backup.sh >> /data/www/admin/application/logs/crond.log 2>&1 &" >> ${CRONTAB_PATH}
+
+/sbin/chkconfig crond on
+cat /etc/redhat-release |grep 7\\..*|grep -i centos > /dev/null
+if [ $? -eq 0 ];then
+    systemctl stop php-fpm.service
+    systemctl stop redis.service
+    systemctl stop nginx.service
+
+    systemctl start php-fpm.service
+    systemctl start redis.service
+    systemctl start nginx.service
+else
+    service php-fpm restart
+    service mysql restart
+    service nginx restart
+    service redis-server restart
+fi
