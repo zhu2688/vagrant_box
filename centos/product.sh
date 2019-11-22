@@ -123,12 +123,16 @@ if [ ! -f "$NGINX_CONF" ]; then
   echo "$NGINX_CONF is not exist!" && exit 1
 fi
 
-/usr/bin/git clone https://github.com/zhu2688/nginx-base-badbot-blocker ${DATA_NGINX_BADBOT_PATH}
+if [ ! -d ${DATA_NGINX_BADBOT_PATH} ]; then
+    /usr/bin/git clone https://github.com/zhu2688/nginx-base-badbot-blocker ${DATA_NGINX_BADBOT_PATH}
+fi
 cd ${DATA_NGINX_BADBOT_PATH} || exit 1
 git pull
 
 ## 5 ssl
-/usr/bin/git clone https://github.com/Neilpang/acme.sh.git ${DATA_ACMESH_PATH}
+if [ ! -d ${DATA_ACMESH_PATH} ]; then
+    /usr/bin/git clone https://github.com/Neilpang/acme.sh.git ${DATA_ACMESH_PATH}
+fi
 cd ${DATA_ACMESH_PATH} || exit 1
 git pull
 
