@@ -13,7 +13,7 @@ PHP_MAX_EXECUTION_TIME="90"
 PHP_UPLOAD_MAX_FILESIZE="20M"
 PHP_POST_MAX_SIZE="20M"
 PHP_MEMORY_LIMIT="192M"
-PHP_DISABLE_FUNCTIONS="show_source,system,shell_exec,passthru,exec,proc_open,proc_get_status,phpinfo"
+PHP_DISABLE_FUNCTIONS="show_source,system,shell_exec,passthru,exec,proc_get_status,phpinfo"
 PHP_YAF_ENVIRON=`/usr/bin/env php --ri yaf | grep yaf.environ | awk '{print $5}'`
 
 REDIS_CONF="/etc/redis/redis.conf"
@@ -153,9 +153,11 @@ if [ $? -eq 0 ];then
     systemctl start php-fpm.service
     systemctl start redis.service
     systemctl start nginx.service
+    systemctl restart crond
 else
     service php-fpm restart
     service mysql restart
     service nginx restart
     service redis-server restart
+    service crond restart
 fi
