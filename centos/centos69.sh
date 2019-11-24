@@ -63,7 +63,7 @@ ldconfig
 # update gcc -> gcc 4.8.2
 curl -o /etc/yum.repos.d/hop5.repo http://www.hop5.in/yum/el6/hop5.repo
 yum -y remove mysql-server mysql mysql-libs
-yum -y install epel-release telnet git wget ntpdate crontabs cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
+yum -y install epel-release telnet git wget ntpdate crontabs supervisor cmake ncurses-devel bison autoconf automake libtool gcc gcc-c++ openssl openssl-devel curl-devel geoip-devel
 killall php-fpm
 killall mysql
 killall nginx
