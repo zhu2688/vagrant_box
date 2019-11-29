@@ -52,7 +52,7 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet ntpdate git wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+yum -y install epel-release telnet ntpdate git gcc gcc-c++ wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
 killall php-fpm
 killall mysql
 killall nginx
@@ -71,10 +71,12 @@ cd gcc-${GCC} || exit 1
 mkdir -p build
 cd build/
 ../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
-make
-make install
-export PATH=$PATH:/usr/local/gcc/bin
-yum -y remove gcc
+make && make install
+installVersion=`/usr/local/bin/gcc -dumpversion | cut -f1-3 -d.`
+if [ $GCC == $installVersion ];then
+    yum -y remove gcc
+fi
+# export PATH=$PATH:/usr/local/bin
 fi
 
 # install cmake
@@ -112,7 +114,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc
 make && make install
 
 # php config
