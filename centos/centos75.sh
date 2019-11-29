@@ -1,16 +1,17 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.3.10"
+PHP="7.4.0"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="4.0.14"
 MYSQL="8.0.16"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
+LIB_ONIGURUMA="6.9.3"
 CMAKE='3.11.4'
 GCC='5.4.0'
-COMPOSER="1.9.0"
+COMPOSER="1.9.1"
 PHP_REDIS="4.2.0"
 PHP_YAF="3.0.8"
 PHP_YAR="2.0.5"
@@ -29,7 +30,7 @@ REDIS_INI="/etc/redis/redis.conf"
 RELEASE=`cat /etc/redhat-release`
 groupadd $WWWUSER
 useradd -r -g $WWWUSER -s /sbin/nologin -g $WWWUSER -M $WWWUSER
-# yum update 
+# yum update
 curl -o $COUNTRY_FILE ifconfig.co/country-iso
 checkCN=$(< $COUNTRY_FILE grep $COUNTRY)
 
@@ -51,7 +52,7 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet git wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+yum -y install epel-release telnet ntpdate git wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
 killall php-fpm
 killall mysql
 killall nginx
@@ -76,19 +77,19 @@ export PATH=$PATH:/usr/local/gcc/bin
 yum -y remove gcc
 fi
 
-# install cmake 
+# install cmake
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.11/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
 ./configure && make && make install
 
-# install libzip 
+# install libzip
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/libzip-${LIB_ZIP}.tar.gz https://nih.at/libzip/libzip-${LIB_ZIP}.tar.gz
 tar xzf libzip-${LIB_ZIP}.tar.gz
 cd libzip-${LIB_ZIP} || exit 1
-mkdir -p build 
+mkdir -p build
 cd build && cmake .. && make && make install
 
 # install libgd
@@ -98,12 +99,20 @@ tar xzf libgd-${LIB_GD}.tar.gz
 cd libgd-${LIB_GD} || exit 1
 ./configure && make && make install
 
-# install php 
+# install oniguruma
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/oniguruma-${LIB_ONIGURUMA}.tar.gz https://github.com/kkos/oniguruma/releases/download/v${LIB_ONIGURUMA}/onig-${LIB_ONIGURUMA}.tar.gz
+tar xzf oniguruma-${LIB_ONIGURUMA}.tar.gz
+cd onig-${LIB_ONIGURUMA} || exit 1
+./configure && make && make install
+export ONIG_CFLAGS="-I/usr/local/include" ONIG_LIBS="-L/usr/local/lib -lonig"
+
+# install php
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-zip --enable-soap --enable-session --without-gdbm --with-config-file-path=/etc
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc
 make && make install
 
 # php config
@@ -127,7 +136,7 @@ echo "extension=pdo_mysql.so" >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 
-# install compoer 
+# install compoer
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
 /bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
@@ -292,4 +301,3 @@ cd mysql-${MYSQL} || exit 1
 rm -f CmakeCache.txt
 cmake . -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
 make && make install
-
