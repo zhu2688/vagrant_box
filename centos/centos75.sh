@@ -9,7 +9,7 @@ MYSQL="8.0.16"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
-CMAKE='3.11.4'
+CMAKE='3.12.4'
 GCC='6.1.0'
 COMPOSER="1.9.1"
 PHP_REDIS="5.1.1"
@@ -48,7 +48,7 @@ fi
 
 rm -rf /var/cache/yum
 yum makecache
-/bin/sed -i -e 's/^export.*\/usr\/local\/mysql\/bin.*$/d' /etc/profile
+/bin/sed -i -e '/^export.*mysql\/bin.*$/d' /etc/profile
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
@@ -86,6 +86,9 @@ cd ./build || exit 1
 make -j2 && make install && make clean
 installVersion=`/usr/local/bin/gcc -dumpversion | cut -f1-3 -d.`
 if [ $GCC == $installVersion ];then
+    cp ./stage3-x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.22 /usr/lib64/libstdc++.so.6.0.22
+    rm -rf /usr/lib64/libstdc++.so.6
+    ln -s /usr/lib64/libstdc++.so.6.0.22 /usr/lib64/libstdc++.so.6
     yum -y remove gcc
 fi
 # export PATH=$PATH:/usr/local/bin
@@ -93,9 +96,11 @@ fi
 
 # install cmake
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.11/cmake-${CMAKE}.tar.gz
+curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.12/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
+# export CC=/usr/local/bin/gcc
+# export CXX=/usr/local/bin/g++
 ./configure && make && make install && make clean
 
 # install libzip
