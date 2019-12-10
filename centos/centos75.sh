@@ -12,13 +12,13 @@ LIB_ONIGURUMA="6.9.3"
 CMAKE='3.11.4'
 GCC='6.1.0'
 COMPOSER="1.9.1"
-PHP_REDIS="5.0.2"
+PHP_REDIS="5.1.1"
 PHP_YAF="3.0.8"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
-PHP_MONGODB="1.6.0"
+PHP_MONGODB="1.6.1"
 PHP_APCU="5.1.18"
-CACHETOOL="4.1.0"
+CACHETOOL="4.1.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
@@ -54,11 +54,10 @@ source /etc/profile
 
 ##判断是否安装了gcc
 which "gcc" > /dev/null
-if [ $? -nq 0 ]
-then
-    yum -y install gcc gcc-c++
+if [ $? -nq 0 ]; then
+    yum -y install gcc
 fi
-yum -y install epel-release telnet gitwget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+yum -y install epel-release telnet git wget gcc-c++ ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
 killall php-fpm
 killall mysql
 killall nginx
@@ -75,14 +74,16 @@ tar xzf gcc-${GCC}.tar.gz
 cd gcc-${GCC} || exit 1
 ./contrib/download_prerequisites
 
-if [! -d /vagrant ]; then
+cd /usr/local/src/gcc-${GCC}  || exit 1
+if [ ! -d /vagrant ]; then
     mkdir -p build
 else
+    mkdir -p /vagrant/build
     ln -s /vagrant/build ./build
 fi
-cd build/ || exit 1
+cd ./build || exit 1
 /usr/local/src/gcc-${GCC}/configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
-make -j2&& make install && make clean
+make -j2 && make install && make clean
 installVersion=`/usr/local/bin/gcc -dumpversion | cut -f1-3 -d.`
 if [ $GCC == $installVersion ];then
     yum -y remove gcc
@@ -305,6 +306,9 @@ EOF
 chmod +x /usr/lib/systemd/system/php-fpm.service
 chmod +x /usr/lib/systemd/system/redis.service
 chmod +x /usr/lib/systemd/system/nginx.service
+
+systemctl disable firewalld.service
+systemctl stop firewalld.service
 
 systemctl stop php-fpm.service
 systemctl stop redis.service
