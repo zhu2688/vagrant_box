@@ -4,21 +4,21 @@
 PHP="7.4.0"
 NGINX="2.3.2"
 PCRE="8.43"
-REDIS="4.0.14"
+REDIS="5.0.7"
 MYSQL="8.0.16"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
 CMAKE='3.11.4'
-GCC='5.4.0'
+GCC='6.1.0'
 COMPOSER="1.9.1"
-PHP_REDIS="4.2.0"
+PHP_REDIS="5.0.2"
 PHP_YAF="3.0.8"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
-PHP_MONGODB="1.5.3"
-PHP_APCU="5.1.17"
-CACHETOOL="4.0.1"
+PHP_MONGODB="1.6.0"
+PHP_APCU="5.1.18"
+CACHETOOL="4.1.0"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
@@ -46,13 +46,19 @@ if [[ -n $checkCN ]]; then
   fi
 fi
 
-yum clean all
+rm -rf /var/cache/yum
 yum makecache
 /bin/sed -i -e 's/^export.*\/usr\/local\/mysql\/bin.*$/d' /etc/profile
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-yum -y install epel-release telnet ntpdate git gcc gcc-c++ wget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+##判断是否安装了gcc
+which "gcc" > /dev/null
+if [ $? -nq 0 ]
+then
+    yum -y install gcc gcc-c++
+fi
+yum -y install epel-release telnet gitwget ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
 killall php-fpm
 killall mysql
 killall nginx
@@ -68,10 +74,15 @@ curl -L -o /usr/local/src/gcc-${GCC}.tar.gz http://ftp.gnu.org/gnu/gcc/gcc-${GCC
 tar xzf gcc-${GCC}.tar.gz
 cd gcc-${GCC} || exit 1
 ./contrib/download_prerequisites
-mkdir -p build
-cd build/
-../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
-make && make install
+
+if [! -d /vagrant ]; then
+    mkdir -p build
+else
+    ln -s /vagrant/build ./build
+fi
+cd build/ || exit 1
+/usr/local/src/gcc-${GCC}/configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
+make -j2&& make install && make clean
 installVersion=`/usr/local/bin/gcc -dumpversion | cut -f1-3 -d.`
 if [ $GCC == $installVersion ];then
     yum -y remove gcc
@@ -84,7 +95,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.11/cmake-${CMAKE}.tar.gz
 tar xzf cmake-${CMAKE}.tar.gz
 cd cmake-${CMAKE} || exit 1
-./configure && make && make install
+./configure && make && make install && make clean
 
 # install libzip
 cd /usr/local/src || exit 1
@@ -115,7 +126,7 @@ curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/ph
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
 ./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc
-make && make install
+make && make install && make clean
 
 # php config
 /bin/mkdir -p /usr/local/etc/php-fpm.d/
@@ -128,21 +139,38 @@ make && make install
 /bin/sed -i -e 's/^include=NONE.*$/include=etc\/php-fpm.d\/\*.conf/' /usr/local/etc/php-fpm.conf
 /bin/sed -i -e 's|;pid = run/php-fpm.pid|pid = run/php-fpm.pid|g' /usr/local/etc/php-fpm.conf
 
-# /usr/local/bin/pecl install yaf-${PHP_YAF}
+/usr/local/bin/pecl install yaf-${PHP_YAF}
+/usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
+/usr/local/bin/pecl install mongodb-${PHP_MONGODB}
+printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
 printf "no\n" | /usr/local/bin/pecl install redis-${PHP_REDIS}
+printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
+{
+  echo 'extension=msgpack.so'
+  echo 'extension=redis.so'
+  echo 'extension=mysqli.so'
+  echo 'extension=pdo_mysql.so'
+  echo 'extension=mongodb.so'
+  echo 'extension=yar.so'
+  echo 'extension=apcu.so'
+} >> ${PHP_INI}
 
-# echo "extension=yaf.so" >> $PHP_INI
-echo "extension=redis.so" >> $PHP_INI
-echo "extension=mysqli.so" >> $PHP_INI
-echo "extension=pdo_mysql.so" >> $PHP_INI
+echo '[yaf]
+extension=yaf.so
+yaf.environ=dev
+' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 
 # install compoer
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/composer.phar https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
-/bin/cp -rf /usr/local/src/composer.phar /usr/local/bin/composer
+curl -L -o /usr/local/bin/composer https://github.com/composer/composer/releases/download/${COMPOSER}/composer.phar
 chmod +x /usr/local/bin/composer
+
+# install cachetool
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/bin/cachetool https://github.com/gordalina/cachetool/raw/gh-pages/downloads/cachetool-${CACHETOOL}.phar
+chmod +x /usr/local/bin/cachetool
 
 # install tengine
 cd /usr/local/src || exit 1
@@ -171,7 +199,7 @@ events {
 }
 http {
     include       mime.types;
-    server_tag "SOEASY4.0";
+    server_tag "SOEASY7.0";
     server_info off;
     default_type  application/octet-stream;
 
