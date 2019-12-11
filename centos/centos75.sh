@@ -5,12 +5,11 @@ PHP="7.4.0"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="5.0.7"
-MYSQL="8.0.16"
+MYSQL="8.0.18"
 LIB_ZIP="1.5.2"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
 CMAKE='3.12.4'
-GCC='6.1.0'
 COMPOSER="1.9.1"
 PHP_REDIS="5.1.1"
 PHP_YAF="3.0.8"
@@ -285,6 +284,8 @@ chmod +x /usr/lib/systemd/system/nginx.service
 systemctl disable firewalld.service
 systemctl stop firewalld.service
 
+systemctl daemon-reload
+
 systemctl stop php-fpm.service
 systemctl stop redis.service
 systemctl stop nginx.service
@@ -293,7 +294,6 @@ systemctl enable php-fpm.service
 systemctl enable redis.service
 systemctl enable nginx.service
 
-systemctl daemon-reload
 systemctl start php-fpm.service
 systemctl start redis.service
 systemctl start nginx.service
@@ -304,9 +304,13 @@ useradd -r -g $DB_USER -s /bin/false $DB_USER
 mkdir -p $DB_DATA_PATH
 chown -R $DB_USER:$DB_USER $DB_DATA_PATH
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://downloads.mysql.com/archives/get/file/mysql-boost-${MYSQL}.tar.gz
-tar xzf mysql-${MYSQL}.tar.gz
-cd mysql-${MYSQL} || exit 1
-rm -f CmakeCache.txt
-cmake . -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
-make && make install
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-boost-${MYSQL}.tar.gz
+if [ ! -d /vagrant ]; then
+    tar xzf mysql-${MYSQL}.tar.gz
+    cd mysql-${MYSQL} || exit 1
+else
+    tar xzf mysql-${MYSQL}.tar.gz -C /vagrant
+    cd /vagrant/mysql-${MYSQL} || exit 1
+fi
+cmake . -DFORCE_INSOURCE_BUILD=1 -DWITH_BOOST=boost -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
+make -j2 && make install
