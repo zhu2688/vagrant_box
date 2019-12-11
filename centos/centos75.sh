@@ -52,47 +52,15 @@ yum makecache
 echo "export PATH=\"\$PATH:/usr/local/mysql/bin:/usr/local/bin:\$PATH\";" >> /etc/profile
 source /etc/profile
 
-##判断是否安装了gcc
-which "gcc" > /dev/null
-if [ $? -nq 0 ]; then
-    yum -y install gcc
-fi
-yum -y install epel-release telnet git wget gcc-c++ ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+yum -y install epel-release telnet git wget centos-release-scl scl-utils ncurses-devel bison autoconf automake libtool openssl openssl-devel curl-devel geoip-devel psmisc bzip2
+
 killall php-fpm
 killall mysql
 killall nginx
 # install lib devel
-yum -y install libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel libwebp-devel
+yum -y install devtoolset-8 libxml2 libxml2-devel libjpeg-devel freetype-devel libpng-devel sqlite-devel libwebp-devel
 
-# update gcc
-gccVersion=`gcc -dumpversion | cut -f1-3 -d.`
-if [ $GCC != $gccVersion ];then
-echo "Need Update Gcc about 1 hour"
-cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/gcc-${GCC}.tar.gz http://ftp.gnu.org/gnu/gcc/gcc-${GCC}/gcc-${GCC}.tar.gz
-tar xzf gcc-${GCC}.tar.gz
-cd gcc-${GCC} || exit 1
-./contrib/download_prerequisites
-
-cd /usr/local/src/gcc-${GCC}  || exit 1
-if [ ! -d /vagrant ]; then
-    mkdir -p build
-else
-    mkdir -p /vagrant/build
-    ln -s /vagrant/build ./build
-fi
-cd ./build || exit 1
-/usr/local/src/gcc-${GCC}/configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
-make -j2 && make install && make clean
-installVersion=`/usr/local/bin/gcc -dumpversion | cut -f1-3 -d.`
-if [ $GCC == $installVersion ];then
-    cp ./stage3-x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.22 /usr/lib64/libstdc++.so.6.0.22
-    rm -rf /usr/lib64/libstdc++.so.6
-    ln -s /usr/lib64/libstdc++.so.6.0.22 /usr/lib64/libstdc++.so.6
-    yum -y remove gcc
-fi
-# export PATH=$PATH:/usr/local/bin
-fi
+source /opt/rh/devtoolset-8/enable
 
 # install cmake
 cd /usr/local/src || exit 1
@@ -143,9 +111,9 @@ make && make install && make clean
 /bin/cp ./sapi/fpm/php-fpm.conf /usr/local/etc/php-fpm.conf -r
 /bin/cp ./sapi/fpm/www.conf /usr/local/etc/php-fpm.d/www.conf -r
 /bin/sed -i -e 's/^include=NONE.*$/include=etc\/php-fpm.d\/\*.conf/' /usr/local/etc/php-fpm.conf
-/bin/sed -i -e 's|;pid = run/php-fpm.pid|pid = run/php-fpm.pid|g' /usr/local/etc/php-fpm.conf
+/bin/sed -i -e 's|;pid = run/php-fpm.pid|pid = /var/run/php-fpm.pid|g' /usr/local/etc/php-fpm.conf
 
-/usr/local/bin/pecl install yaf-${PHP_YAF}
+# /usr/local/bin/pecl install yaf-${PHP_YAF}
 /usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
 /usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
@@ -161,10 +129,10 @@ printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
   echo 'extension=apcu.so'
 } >> ${PHP_INI}
 
-echo '[yaf]
-extension=yaf.so
-yaf.environ=dev
-' >> $PHP_INI
+# echo '[yaf]
+# extension=yaf.so
+# yaf.environ=dev
+# ' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 
@@ -197,7 +165,7 @@ user www;
 worker_processes  2;
 
 error_log  logs/error.log;
-#pid        logs/nginx.pid;
+pid        /var/run/nginx.pid;
 
 events {
     worker_connections  10240;
@@ -265,6 +233,7 @@ Type=forking
 PIDFile=/var/run/nginx.pid
 ExecStartPre=/usr/local/nginx/sbin/nginx -t
 ExecStart=/usr/local/nginx/sbin/nginx
+ExecStartPost=/bin/sleep 0.1
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
@@ -298,6 +267,7 @@ After=syslog.target network.target
 Type=forking
 PIDFile=/var/run/redis.pid
 ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
+ExecStartPost=/bin/sleep 0.1
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
