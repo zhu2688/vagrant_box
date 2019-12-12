@@ -111,6 +111,7 @@ make && make install && make clean
 /bin/cp ./sapi/fpm/www.conf /usr/local/etc/php-fpm.d/www.conf -r
 /bin/sed -i -e 's/^include=NONE.*$/include=etc\/php-fpm.d\/\*.conf/' /usr/local/etc/php-fpm.conf
 /bin/sed -i -e 's|;pid = run/php-fpm.pid|pid = /var/run/php-fpm.pid|g' /usr/local/etc/php-fpm.conf
+/bin/sed -i -e 's|;error_log = log/php-fpm.log|error_log = /var/log/php-fpm.log|g' /usr/local/etc/php-fpm.conf
 
 # /usr/local/bin/pecl install yaf-${PHP_YAF}
 /usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
@@ -304,7 +305,7 @@ useradd -r -g $DB_USER -s /bin/false $DB_USER
 mkdir -p $DB_DATA_PATH
 chown -R $DB_USER:$DB_USER $DB_DATA_PATH
 cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-boost-${MYSQL}.tar.gz
+curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-boost-${MYSQL}.tar.gz
 if [ ! -d /vagrant ]; then
     tar xzf mysql-${MYSQL}.tar.gz
     cd mysql-${MYSQL} || exit 1
@@ -312,5 +313,5 @@ else
     tar xzf mysql-${MYSQL}.tar.gz -C /vagrant
     cd /vagrant/mysql-${MYSQL} || exit 1
 fi
-cmake . -DFORCE_INSOURCE_BUILD=1 -DWITH_BOOST=boost -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
-make -j2 && make install
+cmake . -DFORCE_INSOURCE_BUILD=1 -DWITH_BOOST=./boost -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
+make && make install
