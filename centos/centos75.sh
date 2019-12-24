@@ -113,7 +113,7 @@ make && make install && make clean
 /bin/sed -i -e 's|;pid = run/php-fpm.pid|pid = /var/run/php-fpm.pid|g' /usr/local/etc/php-fpm.conf
 /bin/sed -i -e 's|;error_log = log/php-fpm.log|error_log = /var/log/php-fpm.log|g' /usr/local/etc/php-fpm.conf
 
-# /usr/local/bin/pecl install yaf-${PHP_YAF}
+/usr/local/bin/pecl install yaf-${PHP_YAF}
 /usr/local/bin/pecl install msgpack-${PHP_MSGPACK}
 /usr/local/bin/pecl install mongodb-${PHP_MONGODB}
 printf "yes\n" | /usr/local/bin/pecl install yar-${PHP_YAR}
@@ -129,10 +129,10 @@ printf "no\n" | /usr/local/bin/pecl install apcu-${PHP_APCU}
   echo 'extension=apcu.so'
 } >> ${PHP_INI}
 
-# echo '[yaf]
-# extension=yaf.so
-# yaf.environ=dev
-# ' >> $PHP_INI
+echo '[yaf]
+extension=yaf.so
+yaf.environ=dev
+' >> $PHP_INI
 
 /bin/sed -i -e 's/^[;]\{0,1\}date.timezone =.*$/date.timezone = PRC/' $PHP_INI
 
