@@ -40,7 +40,7 @@ CRONTAB_PATH="/var/spool/cron/root"
 
 /bin/mkdir -p ${DATA_NGINX_PATH} ${DATA_SHELL_PATH} ${DATA_WWW_PATH}
 
-yum -y install crontabs supervisor
+yum -y install crontabs supervisor ntpdate
 
 ## 1 php config
 if ! command -v php
@@ -81,6 +81,8 @@ fi
 
 /bin/mkdir -p ${REDIS_DATA_PATH}/{logs,data}
 /bin/sed -i "s/^bind.*/bind ${REDIS_BIND_ADDRESS}/" "$REDIS_CONF"
+# /bin/sed -i "s/^protected-mode/bind ${REDIS_BIND_ADDRESS}/" "$REDIS_CONF"
+# ?protected-mode
 # sed -i 's/^port 6379/port '${REDIS_PORT}'/' "$REDIS_CONF"
 /bin/sed -i "s/# maxmemory <bytes>/maxmemory ${REDIS_MAX_MEMORY}/" "$REDIS_CONF"
 /bin/sed -i "s/# maxmemory-policy noeviction/maxmemory-policy volatile-lru/" "$REDIS_CONF"
@@ -136,8 +138,6 @@ if [ ! -d ${DATA_ACMESH_PATH} ]; then
     /usr/bin/git clone https://github.com/Neilpang/acme.sh.git ${DATA_ACMESH_PATH}
 fi
 cd ${DATA_ACMESH_PATH} || exit 1
-git pull
-
 ## 6 /etc/sysctl.conf
 sysctl -p
 
@@ -150,6 +150,7 @@ echo "0 2 * * * (/usr/sbin/ntpdate ntp1.aliyun.com && /sbin/hwclock -w) > /dev/n
 echo "10 0 * * * /data/www/admin/application/bin/db_backup.sh >> /data/www/admin/application/logs/crond.log 2>&1 &" >> ${CRONTAB_PATH}
 
 /sbin/chkconfig crond on
+/sbin/chkconfig supervisord on
 cat /etc/redhat-release |grep 7\\..*|grep -i centos > /dev/null
 if [ $? -eq 0 ];then
     systemctl stop php-fpm.service
