@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.4.0"
+PHP="7.4.1"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="5.0.7"
@@ -12,7 +12,7 @@ LIB_ONIGURUMA="6.9.3"
 CMAKE='3.12.4'
 COMPOSER="1.9.1"
 PHP_REDIS="5.1.1"
-PHP_YAF="3.0.8"
+PHP_YAF="3.0.9"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
 PHP_MONGODB="1.6.1"

@@ -1,7 +1,7 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.2.25"
+PHP="7.2.26"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="4.0.14"
@@ -18,8 +18,8 @@ PHP_YAF="3.0.8"
 PHP_YAR="2.0.5"
 PHP_MSGPACK="2.0.3"
 PHP_MONGODB="1.5.3"
-PHP_APCU="5.1.17"
-CACHETOOL="4.0.1"
+PHP_APCU="5.1.18"
+CACHETOOL="4.1.1"
 COUNTRY="CN"
 COUNTRY_FILE="/tmp/country"
 WWWUSER="www"
