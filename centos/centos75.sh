@@ -277,7 +277,6 @@ WantedBy=multi-user.target
 EOF
 ) | tee /usr/lib/systemd/system/redis.service
 
-## install mysql init
 chmod +x /usr/lib/systemd/system/php-fpm.service
 chmod +x /usr/lib/systemd/system/redis.service
 chmod +x /usr/lib/systemd/system/nginx.service
@@ -300,18 +299,12 @@ systemctl start redis.service
 systemctl start nginx.service
 
 ## install MySQL
-groupadd $DB_USER
-useradd -r -g $DB_USER -s /bin/false $DB_USER
-mkdir -p $DB_DATA_PATH
-chown -R $DB_USER:$DB_USER $DB_DATA_PATH
-cd /usr/local/src || exit 1
-curl -L -o /usr/local/src/mysql-${MYSQL}.tar.gz https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-boost-${MYSQL}.tar.gz
+# 本地虚拟机不安装mysql 占用空间太大
 if [ ! -d /vagrant ]; then
-    tar xzf mysql-${MYSQL}.tar.gz
-    cd mysql-${MYSQL} || exit 1
-else
-    tar xzf mysql-${MYSQL}.tar.gz -C /vagrant
-    cd /vagrant/mysql-${MYSQL} || exit 1
+curl -L -o /usr/local/src/mysql80-community-release-el7.rpm http://repo.mysql.com/mysql80-community-release-el7.rpm
+rpm -ivh mysql80-community-release-el7.rpm
+yum -y install mysql-server
+# mysql 随机生成的密码 在 /var/log/mysqld.log 中可以看到
+# cat /var/log/mysqld.log | grep "password"
+systemctl enable mysqld.service
 fi
-cmake . -DFORCE_INSOURCE_BUILD=1 -DWITH_BOOST=./boost -DMYSQL_DATADIR=$DB_DATA_PATH -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_bin
-make && make install
