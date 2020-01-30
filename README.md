@@ -20,13 +20,13 @@ github上超过100M大文件必须用[LFS](https://git-lfs.github.com) 来上传
 ## centos 6
 vagrant box add php7 centos-6.9-x64.box
 ## centos 7
-## vagrant box add php7 centos-7.4-x64.box
+## vagrant box add php7 centos-7.5-x64.box
 vagrant up
 
 ```
 
 ## 软件环境
--  vagrant 2.2.6
+-  vagrant 2.2.*
 -  VirtualBox 5.2.34
 -  GuestAdditions 5.2.18
 
