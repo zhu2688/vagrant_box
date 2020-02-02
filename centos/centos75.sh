@@ -10,7 +10,7 @@ LIB_ZIP="1.6.0"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
 CMAKE='3.12.4'
-COMPOSER="1.9.1"
+COMPOSER="1.9.2"
 PHP_REDIS="5.1.1"
 PHP_YAF="3.0.9"
 PHP_YAR="2.0.5"
@@ -99,7 +99,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc --with-zip --with-zlib
 make && make install && make clean
 
 # php config
