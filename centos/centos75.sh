@@ -6,7 +6,7 @@ NGINX="2.3.2"
 PCRE="8.43"
 REDIS="5.0.7"
 MYSQL="8.0.18"
-LIB_ZIP="1.5.2"
+LIB_ZIP="1.6.0"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
 CMAKE='3.12.4'
@@ -77,6 +77,7 @@ tar xzf libzip-${LIB_ZIP}.tar.gz
 cd libzip-${LIB_ZIP} || exit 1
 mkdir -p build
 cd build && cmake .. && make && make install
+/bin/cp /usr/local/lib64/pkgconfig/libzip.pc /usr/lib64/pkgconfig/libzip.pc -rf
 
 # install libgd
 cd /usr/local/src || exit 1
