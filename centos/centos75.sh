@@ -5,7 +5,7 @@ PHP="7.4.2"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="5.0.7"
-MYSQL="8.0.18"
+MYSQL="8.0.19"
 LIB_ZIP="1.6.0"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
@@ -238,6 +238,8 @@ ExecStartPost=/bin/sleep 0.1
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
+Restart=always
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target
@@ -272,6 +274,8 @@ ExecStartPost=/bin/sleep 0.1
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
+Restart=always
+RestartSec=1
 
 [Install]
 WantedBy=multi-user.target
@@ -287,17 +291,13 @@ systemctl stop firewalld.service
 
 systemctl daemon-reload
 
-systemctl stop php-fpm.service
-systemctl stop redis.service
-systemctl stop nginx.service
-
 systemctl enable php-fpm.service
 systemctl enable redis.service
 systemctl enable nginx.service
 
-systemctl start php-fpm.service
-systemctl start redis.service
-systemctl start nginx.service
+systemctl restart php-fpm
+systemctl restart redis
+systemctl restart nginx
 
 ## install MySQL
 # 本地虚拟机不安装mysql 占用空间太大
