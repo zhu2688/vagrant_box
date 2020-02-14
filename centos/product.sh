@@ -9,6 +9,8 @@ MEM_TOTAL=`free -m | grep Mem | awk '{print  $2}'`
 
 PHP_EXPOSE="Off"
 PHP_DATE_TIMEZONE="PRC"
+PHP_OPEN_DIR="/data/www"
+PHP_ERROR_LOG_DIR="/data/php/php_error.log"
 PHP_MAX_EXECUTION_TIME="90"
 PHP_UPLOAD_MAX_FILESIZE="20M"
 PHP_POST_MAX_SIZE="20M"
@@ -34,11 +36,12 @@ LIMITS_CONF="/etc/security/limits.conf"
 DATA_ACMESH_PATH="/data/acme.sh"
 DATA_SHELL_PATH="/data/shell"
 DATA_WWW_PATH="/data/www"
+DATA_PHP_PATH="/data/php"
 DATA_NGINX_BADBOT_PATH="/data/nginx/badbot"
 
 CRONTAB_PATH="/var/spool/cron/root"
 
-/bin/mkdir -p ${DATA_NGINX_PATH} ${DATA_SHELL_PATH} ${DATA_WWW_PATH}
+/bin/mkdir -p ${DATA_NGINX_PATH} ${DATA_SHELL_PATH} ${DATA_WWW_PATH} ${DATA_PHP_PATH}
 
 yum -y install crontabs supervisor ntpdate
 
@@ -63,12 +66,17 @@ fi
 /bin/sed -i -e "s/^upload_max_filesize =.*$/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/" "$PATH_PHP_INI"
 /bin/sed -i -e "s/^post_max_size =.*$/post_max_size = ${PHP_POST_MAX_SIZE}/" "$PATH_PHP_INI"
 /bin/sed -i -e "s/^memory_limit =.*$/memory_limit = ${PHP_MEMORY_LIMIT}/" "$PATH_PHP_INI"
+# opendir
+/bin/sed -i -e 's#^[;]\{0,1\}open_basedir =.*$#open_basedir = '${PHP_OPEN_DIR}'#' "$PATH_PHP_INI"
 # disable_functions
 /bin/sed -i -e "s/^[;]\{0,1\}disable_functions.*$/disable_functions = ${PHP_DISABLE_FUNCTIONS}/" "$PATH_PHP_INI"
 # opcache
 /bin/sed -i -e "s/^[;]\{0,1\}opcache.enable\s\?=.*$/opcache.enable=1/" "$PATH_PHP_INI"
 /bin/sed -i -e '/^zend_extension.*opcache.*$/d' "$PATH_PHP_INI"
 echo "zend_extension=opcache.so" >> "$PATH_PHP_INI"
+# error_log
+/bin/sed -i -e '/^error_log = .*$/d' "$PATH_PHP_INI"
+echo "error_log = ${PHP_ERROR_LOG_DIR}" >> "$PATH_PHP_INI"
 
 if [ ! -z $PHP_YAF_ENVIRON ]; then
   /bin/sed -i -e '/^yaf\.environ=.*$/d' $PATH_PHP_INI
