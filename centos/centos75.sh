@@ -303,6 +303,7 @@ systemctl restart nginx
 # 本地虚拟机不安装mysql 占用空间太大
 if [ ! -d /vagrant ]; then
 curl -L -o /usr/local/src/mysql80-community-release-el7.rpm http://repo.mysql.com/mysql80-community-release-el7.rpm
+cd /usr/local/src || exit 1
 rpm -ivh mysql80-community-release-el7.rpm
 yum -y install mysql-server
 # mysql 随机生成的密码 在 /var/log/mysqld.log 中可以看到
