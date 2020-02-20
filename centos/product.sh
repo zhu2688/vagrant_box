@@ -9,13 +9,13 @@ MEM_TOTAL=`free -m | grep Mem | awk '{print  $2}'`
 
 PHP_EXPOSE="Off"
 PHP_DATE_TIMEZONE="PRC"
-PHP_OPEN_DIR="/data/www"
+PHP_OPENBASE_DIR="/data/www:/usr/local/bin/:/tmp/:/home/"
 PHP_ERROR_LOG_DIR="/data/php/php_error.log"
 PHP_MAX_EXECUTION_TIME="90"
 PHP_UPLOAD_MAX_FILESIZE="20M"
 PHP_POST_MAX_SIZE="20M"
 PHP_MEMORY_LIMIT="192M"
-PHP_DISABLE_FUNCTIONS="show_source,system,shell_exec,passthru,exec,proc_get_status,phpinfo"
+PHP_DISABLE_FUNCTIONS="show_source,system,passthru,exec,proc_get_status,phpinfo"
 PHP_YAF_ENVIRON=`/usr/bin/env php --ri yaf | grep yaf.environ | awk '{print $5}'`
 
 REDIS_CONF="/etc/redis/redis.conf"
@@ -67,7 +67,7 @@ fi
 /bin/sed -i -e "s/^post_max_size =.*$/post_max_size = ${PHP_POST_MAX_SIZE}/" "$PATH_PHP_INI"
 /bin/sed -i -e "s/^memory_limit =.*$/memory_limit = ${PHP_MEMORY_LIMIT}/" "$PATH_PHP_INI"
 # opendir
-/bin/sed -i -e 's#^[;]\{0,1\}open_basedir =.*$#open_basedir = '${PHP_OPEN_DIR}'#' "$PATH_PHP_INI"
+/bin/sed -i -e 's#^[;]\{0,1\}open_basedir =.*$#open_basedir = '${PHP_OPENBASE_DIR}'#' "$PATH_PHP_INI"
 # disable_functions
 /bin/sed -i -e "s/^[;]\{0,1\}disable_functions.*$/disable_functions = ${PHP_DISABLE_FUNCTIONS}/" "$PATH_PHP_INI"
 # opcache
