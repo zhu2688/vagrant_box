@@ -43,7 +43,7 @@ CRONTAB_PATH="/var/spool/cron/root"
 
 /bin/mkdir -p ${DATA_NGINX_PATH} ${DATA_SHELL_PATH} ${DATA_WWW_PATH} ${DATA_PHP_PATH}
 
-yum -y install crontabs supervisor ntpdate
+yum -y install crontabs supervisor ntpdate socat
 
 ## 1 php config
 if ! command -v php
