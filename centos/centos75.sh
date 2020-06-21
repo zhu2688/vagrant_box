@@ -219,6 +219,7 @@ cat <<'EOF'
 server {
      listen       80 default;
      server_name  localhost;
+    # server_name  _;
      location / {
          root   html;
          index  index.html index.htm;
@@ -230,6 +231,48 @@ server {
  }
 EOF
 ) | tee /usr/local/nginx/conf/servers/default.conf
+
+echo "Create /usr/local/nginx/conf/servers/web_app.conf"
+(
+cat <<'EOF'
+server {
+    listen       80;
+    server_name  app.test.com;
+    charset utf-8;
+    access_log  logs/app-access.log  main;
+    error_log   logs/app-error.log;
+    root /data/www/web_app/public;
+    index index.htm index.html index.php;
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+    }
+    location = /robots.txt {
+        access_log off;
+        log_not_found off;
+    }
+    location = /sitemap.xml {
+        access_log off;
+        log_not_found off;
+    }
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+    if ($request_method ~ ^(HEAD)$ ) {
+      return 200;
+    }
+    location / {
+        try_files $uri $uri/ /index.php?/$request_uri;
+    }
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
+EOF
+) | tee /usr/local/nginx/conf/servers/web_app.conf
 
 echo "Creating /usr/lib/systemd/system/nginx.service"
 (
