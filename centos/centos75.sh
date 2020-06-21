@@ -1,11 +1,12 @@
 #!/bin/bash
 #Provided by @soeasy
 
-PHP="7.4.3"
+PHP="7.4.7"
 NGINX="2.3.2"
 PCRE="8.43"
 REDIS="5.0.7"
 MYSQL="8.0.19"
+LIB_FREETYPE='2.9.1'
 LIB_ZIP="1.6.0"
 LIB_GD="2.2.5"
 LIB_ONIGURUMA="6.9.3"
@@ -61,6 +62,13 @@ yum -y install devtoolset-8 libxml2 libxml2-devel libjpeg-devel freetype-devel l
 
 source /opt/rh/devtoolset-8/enable
 
+# install freetype
+cd /usr/local/src || exit 1
+curl -L -o /usr/local/src/freetype-${LIB_FREETYPE}.tar.gz https://download.savannah.gnu.org/releases/freetype/freetype-${LIB_FREETYPE}.tar.gz
+tar xzf freetype-${LIB_FREETYPE}.tar.gz
+cd freetype-${LIB_FREETYPE} || exit 1
+./configure && make && make install
+
 # install cmake
 cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/cmake-${CMAKE}.tar.gz https://cmake.org/files/v3.12/cmake-${CMAKE}.tar.gz
@@ -99,7 +107,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}.tar.gz
 tar xzf php-${PHP}.tar.gz
 cd php-${PHP} || exit 1
-./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc --with-zip --with-zlib
+./configure --enable-ctype --enable-exif --enable-ftp --with-curl --with-mysql-sock=/tmp/mysql.sock --with-pdo-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --enable-mbstring --enable-inline-optimization --disable-debug --enable-sockets --disable-short-tags --enable-phar --enable-fpm  --with-pear --with-fpm-user=$WWWUSER --with-fpm-group=$WWWUSER --enable-gd --with-openssl --enable-bcmath --enable-shmop --enable-mbregex --with-iconv --with-mhash --enable-pcntl --enable-soap --enable-session --without-gdbm --without-sqlite3 --without-pdo-sqlite --with-config-file-path=/etc --with-zip --with-zip --with-zlib --with-freetype
 make && make install && make clean
 
 # php config
@@ -152,6 +160,7 @@ cd /usr/local/src || exit 1
 curl -L -o /usr/local/src/pcre-${PCRE}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${PCRE}.tar.gz
 tar xzf pcre-${PCRE}.tar.gz
 curl -L -o /usr/local/src/tengine-${NGINX}.tar.gz http://tengine.taobao.org/download/tengine-${NGINX}.tar.gz
+
 tar xzf tengine-${NGINX}.tar.gz
 cd tengine-${NGINX} || exit 1
 ./configure --with-select_module --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-pcre=/usr/local/src/pcre-${PCRE} --with-ipv6 --with-http_geoip_module
